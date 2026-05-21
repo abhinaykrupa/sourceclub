@@ -1,0 +1,32 @@
+Darby Dental Supply - Order History Export
+Customer: Quincy Smiles Family Dentistry
+Account #: DRB-44521
+Period: 01/2025 - 12/2025
+,,,,,,,
+Order #,Item Code,Item Description,UOM,Qty Shipped,Unit Cost,Extended,Mfg
+ORD-7701,DRB-2001,"Gloves, Nitrile Exam, PF, Medium, 100ct",BX,40,13.25,530.00,Ansell
+ORD-7702,DRB-2002,"Gloves, Nitrile, Large, Powder-Free, 100ct",BX,32,13.25,424.00,Ansell
+ORD-7703,DRB-2003,"Latex Exam Gloves, Med, PF, 100/Bx",BX,10,12.00,120.00,Cranberry
+ORD-7704,DRB-3001,"Face Mask, Earloop, Lvl 3, Blue, 50/bx",BX,48,12.50,600.00,Crosstex
+ORD-7705,DRB-3002,"Mask Level 2 Earloop Blue 50ct",BX,16,11.00,176.00,Crosstex
+ORD-7706,DRB-4001,Lidocaine 2% Epi 1:100k 50/Bx,BX,18,55.00,990.00,Septodont
+ORD-7707,DRB-4002,Septocaine 4% Epi 1:100k 50/Bx,BX,14,65.00,910.00,Septodont
+ORD-7708,DRB-5001,"Cotton Rolls #2, Medium, Non-Sterile, 2000/Cs",CS,8,27.50,220.00,Patterson
+ORD-7709,DRB-5002,"Gauze, 2x2, NS, 8-ply, 200/bag",BG,30,7.00,210.00,Medline
+ORD-7710,DRB-5003,"Gauze, 4x4, NS, 8-ply, 200/bag",BG,20,11.00,220.00,Medline
+ORD-7711,DRB-6001,Dental Needle 27g Short 100/Box,BX,14,23.00,322.00,Septodont
+ORD-7712,DRB-6002,Dental Needle 30g Short 100/Box,BX,10,23.00,230.00,Septodont
+ORD-7713,DRB-7001,FG Carbide Bur #330 10pk,PK,22,18.00,396.00,SS White
+ORD-7714,DRB-7002,FG Carbide Bur #557 10pk,PK,16,18.00,288.00,SS White
+ORD-7715,DRB-8001,VPS Impression Heavy 50ml Cartridge,EA,12,28.00,336.00,Dentsply
+ORD-7716,DRB-9001,Composite Resin A2 Shade 4g Syringe,EA,20,36.00,720.00,3M ESPE
+ORD-7717,DRB-9002,Composite Resin A3 Shade 4g Syringe,EA,16,36.00,576.00,3M ESPE
+ORD-7718,DRB-A001,Prophy Paste Bubblegum Med Grit 200/Bx,BX,10,38.00,380.00,Young Innovations
+ORD-7719,DRB-A002,Prophy Cups Soft Snap-on 100/Bag,BG,18,9.50,171.00,Young Innovations
+ORD-7720,DRB-B001,"Barrier Film, Refill Roll 1200ct",RL,10,27.00,270.00,Crosstex
+ORD-7721,DRB-B002,Surface Disinfectant Wipes 160ct,EA,18,18.00,324.00,PDI
+ORD-7722,DRB-C001,Saliva Ejector White 100/bag,BG,20,10.00,200.00,Patterson
+ORD-7723,DRB-C002,HVE Tips Vented 100/Bag,BG,14,11.00,154.00,Patterson
+ORD-7724,DRB-D001,Dental Floss Waxed Unflavored 200m,RL,8,8.00,64.00,GUM
+ORD-7725,DRB-Z001,Etchant Gel 37% Phos Acid 3mL Syringe,EA,12,16.00,192.00,Bisco
+ORD-7726,DRB-Z002,Bonding Agent Universal 5ml,EA,6,72.00,432.00,Bisco

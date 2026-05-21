@@ -1,0 +1,40 @@
+sc_sku,description,manufacturer,mfg_sku,category,unit_of_measure,pack_size,unit_price
+SC-GLV-NIT-SM,Nitrile Exam Gloves Powder-Free Small,Ansell,93-311-SM,Gloves,Box,100,7.50
+SC-GLV-NIT-MD,Nitrile Exam Gloves Powder-Free Medium,Ansell,93-311-MD,Gloves,Box,100,7.50
+SC-GLV-NIT-LG,Nitrile Exam Gloves Powder-Free Large,Ansell,93-311-LG,Gloves,Box,100,7.50
+SC-GLV-NIT-XL,Nitrile Exam Gloves Powder-Free X-Large,Ansell,93-311-XL,Gloves,Box,100,7.50
+SC-GLV-LAT-MD,Latex Exam Gloves Powder-Free Medium,Cranberry,CRA-GL-101-M,Gloves,Box,100,6.25
+SC-GLV-LAT-LG,Latex Exam Gloves Powder-Free Large,Cranberry,CRA-GL-101-L,Gloves,Box,100,6.25
+SC-MSK-L1-BLU,Earloop Face Mask Level 1 Blue,Crosstex,GCBL-L1,Masks,Box,50,4.50
+SC-MSK-L2-BLU,Earloop Face Mask Level 2 Blue,Crosstex,GCBL-L2,Masks,Box,50,5.25
+SC-MSK-L3-BLU,Earloop Face Mask Level 3 Blue,Crosstex,GCBL-L3,Masks,Box,50,6.75
+SC-MSK-L3-GRN,Earloop Face Mask Level 3 Green,Crosstex,GCGN-L3,Masks,Box,50,6.75
+SC-LIDO-2-EPI,Lidocaine 2% with Epinephrine 1:100000,Septodont,0010011,Anesthetic,Box,50,28.00
+SC-LIDO-2-PLAIN,Lidocaine 2% Plain,Septodont,0010021,Anesthetic,Box,50,25.00
+SC-SEPT-4,Septocaine 4% with Epinephrine 1:100000,Septodont,1000411,Anesthetic,Box,50,34.00
+SC-MEPIV-3,Mepivacaine 3% Plain,Septodont,0030031,Anesthetic,Box,50,26.50
+SC-COT-2-2K,Cotton Rolls #2 Medium Non-Sterile,Patterson,007-1234,Cotton,Case,2000,14.00
+SC-COT-1-2K,Cotton Rolls #1 Small Non-Sterile,Patterson,007-1235,Cotton,Case,2000,13.50
+SC-GAUZE-2X2,Gauze Sponges 2x2 Non-Sterile 8-ply,Medline,G21088H,Gauze,Bag,200,3.25
+SC-GAUZE-4X4,Gauze Sponges 4x4 Non-Sterile 8-ply,Medline,G44088H,Gauze,Bag,200,5.50
+SC-NDL-27S,Dental Needle 27G Short,Septodont,NDL-27S-100,Needles,Box,100,12.50
+SC-NDL-30S,Dental Needle 30G Short,Septodont,NDL-30S-100,Needles,Box,100,12.50
+SC-NDL-27L,Dental Needle 27G Long,Septodont,NDL-27L-100,Needles,Box,100,12.50
+SC-SUTURE-3-0,Suture 3-0 Silk 18 Black Braided,Ethicon,683G,Sutures,Box,12,22.00
+SC-SUTURE-4-0,Suture 4-0 Chromic Gut 18,Ethicon,690G,Sutures,Box,12,24.00
+SC-COMP-A2,Composite Resin A2 Shade 4g,3M ESPE,4630A2,Composites,Syringe,4g,18.50
+SC-COMP-A3,Composite Resin A3 Shade 4g,3M ESPE,4630A3,Composites,Syringe,4g,18.50
+SC-COMP-B2,Composite Resin B2 Shade 4g,3M ESPE,4630B2,Composites,Syringe,4g,18.50
+SC-IMP-VPS-HD,VPS Impression Material Heavy Body,Dentsply,PVSHB-50,Impression,Cartridge,50mL,14.75
+SC-IMP-VPS-LB,VPS Impression Material Light Body,Dentsply,PVSLB-50,Impression,Cartridge,50mL,13.50
+SC-BUR-330,Carbide Bur #330 FG,SS White,330-10PK,Burs,Pack,10,8.25
+SC-BUR-557,Carbide Bur #557 FG,SS White,557-10PK,Burs,Pack,10,8.25
+SC-BUR-245,Carbide Bur #245 FG,SS White,245-10PK,Burs,Pack,10,8.25
+SC-FLOSS-UN,Waxed Dental Floss Unflavored 200m,GUM,890,Preventive,Roll,200m,3.75
+SC-PROPHY-MED,Prophy Paste Medium Grit Bubblegum,Young Innovations,3040-200,Preventive,Box,200,18.00
+SC-PROPHY-CUP,Prophy Cup Soft Snap-On,Young Innovations,YDC-100,Preventive,Bag,100,4.25
+SC-BARRIER-FLM,Barrier Film Dispenser Refill,Crosstex,BFDRL,Infection Control,Roll,1200,14.50
+SC-DISIN-SURF,Surface Disinfectant Wipes,PDI,Q55172,Infection Control,Canister,160,8.75
+SC-SALIV-EJCT,Saliva Ejectors White,Patterson,PAT-SE-100,Evacuation,Bag,100,4.50
+SC-HVE-TIP,HVE Tips Vented,Patterson,PAT-HVE-100,Evacuation,Bag,100,5.25
+SC-XRAY-SIZE2,Periapical X-Ray Film Size 2 D-Speed,Kodak,1500638,Radiology,Box,150,28.50

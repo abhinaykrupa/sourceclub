@@ -1,0 +1,34 @@
+Base86 Purchase Analysis Export
+Practice: Auburn Dental Group
+Export Date: 2025-12-31
+Analysis Period: January 2025 - December 2025
+,,,,,,
+Product Code,Product Description,Category,Annual Qty,Price Per Unit,Annual Spend,Supplier
+B86-001,Nitrile Exam Gloves Med 100/Box,PPE,52,12.50,650.00,Benco
+B86-002,Nitrile Gloves Large 100/Box,PPE,40,12.50,500.00,Benco
+B86-003,Face Mask Level 3 Blue 50/Box,PPE,72,11.50,828.00,Benco
+B86-004,Lidocaine 2% with Epi 50 Carpules/Box,Anesthetic,28,49.00,1372.00,Benco
+B86-005,Septocaine 4% with Epi 50/Box,Anesthetic,20,60.00,1200.00,Benco
+B86-006,Cotton Rolls #2 Medium 2000/Case,Consumable,14,25.00,350.00,Benco
+B86-007,Gauze 2x2 Non-Sterile 200/Bag,Consumable,42,6.50,273.00,Patterson
+B86-008,Gauze 4x4 Non-Sterile 200/Bag,Consumable,28,10.00,280.00,Patterson
+B86-009,Dental Needles 27G Short 100/Box,Needles,22,21.50,473.00,Benco
+B86-010,Dental Needles 30G Short 100/Box,Needles,16,21.50,344.00,Benco
+B86-011,Carbide Bur #330 FG 10/Pack,Burs,30,16.00,480.00,Benco
+B86-012,Carbide Bur #557 FG 10/Pack,Burs,22,16.00,352.00,Benco
+B86-013,VPS Impression Heavy Body 50mL,Impression,14,25.50,357.00,Patterson
+B86-014,VPS Impression Light Body 50mL,Impression,14,23.00,322.00,Patterson
+B86-015,Composite A2 Shade 4g Syringe,Composite,28,33.00,924.00,Benco
+B86-016,Composite A3 Shade 4g Syringe,Composite,22,33.00,726.00,Benco
+B86-017,Composite B2 Shade 4g Syringe,Composite,14,33.00,462.00,Benco
+B86-018,Prophy Paste Medium 200/Box,Preventive,12,33.00,396.00,Patterson
+B86-019,Prophy Cups Soft 100/Bag,Preventive,24,8.50,204.00,Patterson
+B86-020,Barrier Film Roll 1200 Sheets,Infection Control,14,25.50,357.00,Benco
+B86-021,Surface Disinfectant Wipes 160ct,Infection Control,28,16.50,462.00,Patterson
+B86-022,Saliva Ejectors White 100/Bag,Evacuation,28,9.00,252.00,Patterson
+B86-023,HVE Tips Vented 100/Bag,Evacuation,22,9.75,214.50,Patterson
+B86-024,Mepivacaine 3% Plain 50/Box,Anesthetic,14,47.00,658.00,Benco
+B86-025,Latex Gloves Medium PF 100/Box,PPE,14,11.75,164.50,Patterson
+B86-UNKN1,Air Abrasion AlumOx 50 Mic 1lb,Abrasion,4,42.00,168.00,Patterson
+B86-UNKN2,Dycal Ivory Cavity Liner,Liner,8,35.00,280.00,Dentsply
+B86-UNKN3,Articulating Paper Blue Thin 144/Box,Misc,6,12.00,72.00,Patterson
