@@ -40,62 +40,264 @@ SAMPLE_DIR = ROOT / "sample_data"
 
 # ---------- Global styling ----------
 st.markdown("""
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-    /* Tighter padding */
-    .block-container { padding-top: 1.5rem !important; padding-bottom: 2rem; max-width: 1280px; }
-    /* Metric tweaks */
+    /* ---- Typography baseline ---- */
+    html, body, [class*="css"], .stApp {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        font-feature-settings: 'cv11', 'ss01';
+        -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---- Page background — soft healthcare gradient ---- */
+    .stApp {
+        background:
+            radial-gradient(ellipse at top right, rgba(14, 165, 161, 0.045) 0%, transparent 50%),
+            radial-gradient(ellipse at bottom left, rgba(16, 185, 129, 0.035) 0%, transparent 50%),
+            #FAFCFC;
+    }
+
+    /* ---- Container ---- */
+    .block-container {
+        padding-top: 2.5rem !important;
+        padding-bottom: 3rem;
+        max-width: 1320px;
+    }
+
+    /* ---- Hero header section ---- */
+    .sc-hero {
+        background: linear-gradient(135deg, #0F766E 0%, #0EA5A1 50%, #14B8A6 100%);
+        border-radius: 16px;
+        padding: 28px 32px;
+        margin-bottom: 22px;
+        color: white;
+        box-shadow:
+            0 4px 24px rgba(15, 118, 110, 0.18),
+            0 1px 2px rgba(15, 23, 42, 0.04);
+        position: relative;
+        overflow: hidden;
+    }
+    .sc-hero::before {
+        content: "";
+        position: absolute;
+        top: -40%;
+        right: -10%;
+        width: 380px;
+        height: 380px;
+        background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);
+        pointer-events: none;
+    }
+    .sc-hero::after {
+        content: "";
+        position: absolute;
+        bottom: -30%;
+        left: 15%;
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(circle, rgba(94,234,212,0.18) 0%, transparent 70%);
+        pointer-events: none;
+    }
+    .sc-hero-row { display: flex; align-items: center; gap: 18px; position: relative; z-index: 1; }
+    .sc-hero-text { flex: 1; }
+    .sc-wordmark {
+        font-family: 'Inter', sans-serif;
+        font-size: 2.05rem;
+        font-weight: 800;
+        line-height: 1.15;
+        letter-spacing: -0.025em;
+        color: white;
+        padding-top: 4px;
+        margin: 0;
+    }
+    .sc-subtitle {
+        font-size: 0.85rem;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.78);
+        margin-top: 4px;
+    }
+    .sc-pill {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: rgba(255,255,255,0.16);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255,255,255,0.22);
+        padding: 5px 12px; border-radius: 999px;
+        font-size: 0.72rem; font-weight: 600;
+        color: white;
+        letter-spacing: 0.04em;
+    }
+    .sc-pill-dot {
+        width: 7px; height: 7px; border-radius: 50%;
+        background: #6EE7B7; box-shadow: 0 0 8px #6EE7B7;
+    }
+    .sc-tagline {
+        color: #475569;
+        font-size: 0.95rem;
+        line-height: 1.55;
+        max-width: 920px;
+        margin-bottom: 14px;
+    }
+    .sc-tagline b { color: #0F172A; font-weight: 700; }
+
+    /* ---- Metric cards: accent stripe + better hierarchy ---- */
     [data-testid="stMetric"] {
         background: #FFFFFF;
         border: 1px solid #E2E8F0;
-        border-radius: 8px;
-        padding: 16px 18px;
-        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+        border-radius: 10px;
+        padding: 16px 18px 18px 18px;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.03);
+        position: relative;
+        overflow: hidden;
+        transition: box-shadow 0.18s ease, transform 0.18s ease;
     }
-    [data-testid="stMetricLabel"] > div { color: #64748B; font-size: 0.85rem; }
-    [data-testid="stMetricValue"] { color: #0F172A; font-size: 1.7rem; font-weight: 700; }
-    [data-testid="stMetricDelta"] { font-size: 0.78rem; }
+    [data-testid="stMetric"]::before {
+        content: "";
+        position: absolute; top: 0; left: 0; right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #0EA5A1 0%, #10B981 100%);
+    }
+    [data-testid="stMetric"]:hover {
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
+        transform: translateY(-1px);
+    }
+    [data-testid="stMetricLabel"] > div {
+        color: #64748B; font-size: 0.78rem; font-weight: 600;
+        text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    [data-testid="stMetricValue"] {
+        color: #0F172A; font-size: 1.85rem; font-weight: 800;
+        letter-spacing: -0.02em; line-height: 1.2;
+    }
+    [data-testid="stMetricDelta"] { font-size: 0.78rem; font-weight: 600; }
 
-    /* Tab styling */
+    /* ---- Tab list ---- */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 4px;
-        border-bottom: 2px solid #E2E8F0;
+        gap: 2px;
+        border-bottom: 1px solid #E2E8F0;
+        padding-bottom: 2px;
     }
     .stTabs [data-baseweb="tab"] {
-        padding: 10px 18px;
+        padding: 12px 22px 14px 22px;
         background: transparent;
-        border-radius: 8px 8px 0 0;
+        border-radius: 10px 10px 0 0;
         font-weight: 600;
+        font-size: 0.92rem;
         color: #64748B;
+        transition: all 0.15s ease;
+        margin-bottom: -1px;
+    }
+    .stTabs [data-baseweb="tab"]:hover {
+        color: #0F766E;
+        background: rgba(14, 165, 161, 0.05);
     }
     .stTabs [aria-selected="true"] {
-        background: #F0F9F8 !important;
-        color: #0EA5A1 !important;
+        background: linear-gradient(180deg, #F0FDFA 0%, #FFFFFF 100%) !important;
+        color: #0F766E !important;
+        border-bottom: 2px solid #0EA5A1 !important;
     }
 
-    /* Expander styling */
-    .streamlit-expanderHeader { font-size: 0.95rem; }
+    /* ---- Section headers (h2 / h3) ---- */
+    h2, .stMarkdown h2 {
+        color: #0F172A; font-weight: 800;
+        letter-spacing: -0.02em;
+        margin-top: 1.3rem; margin-bottom: 0.5rem;
+    }
+    h3, .stMarkdown h3 { color: #0F172A; font-weight: 700; letter-spacing: -0.01em; }
+    .stSubheader, .stMarkdown h2 + p { color: #475569; }
 
-    /* DataFrame */
-    [data-testid="stDataFrame"] { border-radius: 6px; overflow: hidden; }
-
-    /* Section headers in non-dashboard tabs */
-    h2 { color: #0F172A; font-weight: 700; }
-    h3 { color: #0F172A; font-weight: 600; }
-
-    /* Buttons */
-    .stButton > button {
-        border-radius: 6px;
+    /* ---- Expanders ---- */
+    .streamlit-expanderHeader, [data-testid="stExpander"] summary {
+        font-size: 0.93rem;
         font-weight: 600;
     }
-    .stDownloadButton > button {
-        background: #0EA5A1;
+    [data-testid="stExpander"] {
+        border: 1px solid #E2E8F0;
+        border-radius: 8px;
+        background: #FFFFFF;
+    }
+
+    /* ---- DataFrames ---- */
+    [data-testid="stDataFrame"] {
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #E2E8F0;
+    }
+
+    /* ---- Buttons ---- */
+    .stButton > button {
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        padding: 8px 16px;
+        border: 1px solid #E2E8F0;
+        background: #FFFFFF;
+        color: #0F172A;
+        transition: all 0.15s ease;
+    }
+    .stButton > button:hover {
+        border-color: #0EA5A1;
+        color: #0F766E;
+        box-shadow: 0 2px 6px rgba(14, 165, 161, 0.12);
+    }
+    .stButton > button[kind="primary"] {
+        background: linear-gradient(135deg, #0F766E 0%, #0EA5A1 100%);
         color: white;
         border: none;
-        border-radius: 6px;
+    }
+    .stDownloadButton > button {
+        background: linear-gradient(135deg, #0F766E 0%, #0EA5A1 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
         font-weight: 600;
+        padding: 9px 16px;
+        box-shadow: 0 1px 3px rgba(15, 118, 110, 0.25);
     }
     .stDownloadButton > button:hover {
-        background: #0F766E;
+        background: linear-gradient(135deg, #134E4A 0%, #0F766E 100%);
+        box-shadow: 0 3px 8px rgba(15, 118, 110, 0.32);
+        transform: translateY(-1px);
+    }
+
+    /* ---- Captions ---- */
+    .stCaption, [data-testid="stCaptionContainer"] {
+        color: #64748B; font-size: 0.82rem;
+    }
+
+    /* ---- File uploader ---- */
+    [data-testid="stFileUploader"] section {
+        border: 2px dashed #CBD5E1;
+        background: #F8FAFC;
+        border-radius: 10px;
+        padding: 18px;
+        transition: all 0.15s ease;
+    }
+    [data-testid="stFileUploader"] section:hover {
+        border-color: #0EA5A1;
+        background: #F0FDFA;
+    }
+
+    /* ---- Code blocks (architecture diagrams) ---- */
+    code, pre {
+        font-family: 'JetBrains Mono', 'Menlo', monospace !important;
+        font-size: 0.8rem !important;
+    }
+    pre {
+        background: #0F172A !important;
+        color: #E2E8F0 !important;
+        border-radius: 8px !important;
+        padding: 16px !important;
+    }
+
+    /* ---- Subtle horizontal rule ---- */
+    hr {
+        border: none;
+        height: 1px;
+        background: linear-gradient(90deg, transparent 0%, #CBD5E1 50%, transparent 100%);
+        margin: 1.4rem 0;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -118,23 +320,57 @@ def status_badge(status: str) -> str:
 
 # ---------- App header ----------
 
-st.markdown("""
-<div style="margin-bottom: 4px;">
-    <span style="font-size: 1.9rem; font-weight: 800; color: #0F172A;">🦷 SourceClub</span>
-    <span style="font-size: 1.1rem; color: #64748B; margin-left: 8px;">Operations POC</span>
+SC_LOGO_SVG = """
+<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+  <defs>
+    <linearGradient id="sclogo" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#E6FFFA" stop-opacity="0.9"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="56" height="56" rx="14"
+        fill="rgba(255,255,255,0.12)"
+        stroke="rgba(255,255,255,0.32)" stroke-width="1.5"/>
+  <!-- stylized tooth/shield -->
+  <path d="M30 14 C23 14 18 18 18 25 C18 30 20.5 34 23 40 C24.5 43.5 26 46 30 46 C34 46 35.5 43.5 37 40 C39.5 34 42 30 42 25 C42 18 37 14 30 14 Z"
+        fill="url(#sclogo)"/>
+  <!-- inner highlight stroke -->
+  <path d="M30 20 C26 20 23 22.5 23 26 C23 29 25 32 26.5 35.5"
+        stroke="rgba(15,118,110,0.42)" stroke-width="2" stroke-linecap="round" fill="none"/>
+  <!-- accent dot suggesting "savings" / value -->
+  <circle cx="36" cy="22" r="2.5" fill="#5EEAD4"/>
+</svg>
+"""
+
+st.markdown(f"""
+<div class="sc-hero">
+    <div class="sc-hero-row">
+        {SC_LOGO_SVG}
+        <div class="sc-hero-text">
+            <div class="sc-wordmark">SourceClub</div>
+            <div class="sc-subtitle">Operations Platform · Case Study POC</div>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+            <div class="sc-pill"><span class="sc-pill-dot"></span> LIVE · MOCK DATA</div>
+            <div style="font-size:0.72rem; color:rgba(255,255,255,0.7); letter-spacing:0.04em;">
+                Built for CEO · Marketing · Sales
+            </div>
+        </div>
+    </div>
 </div>
-<div style="color: #64748B; font-size: 0.95rem; max-width: 900px; margin-bottom: 14px;">
-    Case-study deliverable for the <b>Head of AI Powered Operations, Systems & RevOps</b> role.
-    Three lean prototypes — savings-analysis automation, Stripe↔HubSpot multi-location sync,
-    90-day project roadmap — wrapped in a leadership dashboard built for CEO, Marketing, and Sales.
+
+<div class="sc-tagline">
+    Case-study deliverable for the <b>Head of AI Powered Operations, Systems &amp; RevOps</b> role.
+    Three lean prototypes — savings-analysis automation, Stripe↔HubSpot multi-location sync, 90-day project roadmap —
+    fronted by a <b>leadership dashboard</b> with persona views for the CEO, Head of Marketing, and Head of Sales/Revenue.
 </div>
 """, unsafe_allow_html=True)
 
 tab_dash, tab_sa, tab_sync, tab_roadmap = st.tabs([
-    "📊 Leadership Dashboard",
-    "1️⃣ Savings Analysis",
-    "2️⃣ Stripe ↔ HubSpot Sync",
-    "3️⃣ 90-Day Roadmap",
+    "  📊  Leadership Dashboard  ",
+    "  🔍  Savings Analysis  ",
+    "  🔗  Stripe ↔ HubSpot Sync  ",
+    "  🗺️  90-Day Roadmap  ",
 ])
 
 # ============================================================

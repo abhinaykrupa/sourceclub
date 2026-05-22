@@ -33,17 +33,33 @@ ROSE = "#E11D48"
 INDIGO = "#6366F1"
 
 
-def _section_header(icon: str, title: str, subtitle: str):
+def _section_header(icon: str, title: str, subtitle: str, accent: str = None):
+    accent = accent or TEAL
     st.markdown(
         f"""
-        <div style="margin-top: 1.5rem; margin-bottom: 0.5rem;
-                    padding: 14px 18px; border-left: 4px solid {TEAL};
-                    background: {LIGHT_BG}; border-radius: 4px;">
-            <div style="font-size: 1.25rem; font-weight: 700; color: {SLATE};">
-                {icon} &nbsp; {title}
-            </div>
-            <div style="font-size: 0.9rem; color: #475569; margin-top: 2px;">
-                {subtitle}
+        <div style="margin-top: 1.8rem; margin-bottom: 0.8rem;
+                    padding: 18px 22px;
+                    background: linear-gradient(135deg, #FFFFFF 0%, {LIGHT_BG} 100%);
+                    border-radius: 12px;
+                    border: 1px solid #E2E8F0;
+                    border-left: 4px solid {accent};
+                    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 38px; height: 38px; border-radius: 10px;
+                            background: linear-gradient(135deg, {accent} 0%, #0F766E 100%);
+                            display: flex; align-items: center; justify-content: center;
+                            font-size: 1.15rem; color: white;
+                            box-shadow: 0 2px 6px rgba(15, 118, 110, 0.25);">
+                    {icon}
+                </div>
+                <div>
+                    <div style="font-size: 1.18rem; font-weight: 800; color: {SLATE}; letter-spacing: -0.01em;">
+                        {title}
+                    </div>
+                    <div style="font-size: 0.86rem; color: #64748B; margin-top: 1px; font-weight: 500;">
+                        {subtitle}
+                    </div>
+                </div>
             </div>
         </div>
         """,
@@ -62,22 +78,31 @@ def render():
     # ---- Page header ----
     st.markdown(
         f"""
-        <div style="padding: 8px 0 4px 0;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <span style="font-size: 1.8rem;">📊</span>
-                <span style="font-size: 1.6rem; font-weight: 800; color: {SLATE};">
-                    Leadership Dashboard
-                </span>
-            </div>
-            <div style="color: #64748b; font-size: 0.95rem; margin-top: 4px;">
-                Monday-morning view for the CEO, Head of Marketing, and Head of Sales/Revenue.
-                One page, three lenses on the same pipeline.
+        <div style="padding: 14px 22px; margin-bottom: 6px;
+                    background: linear-gradient(135deg, #F0FDFA 0%, #FFFFFF 100%);
+                    border-radius: 12px; border: 1px solid #CCFBF1;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+                <div>
+                    <div style="font-size: 1.55rem; font-weight: 800; color: {SLATE};
+                                letter-spacing: -0.02em; line-height: 1.2;">
+                        Leadership Dashboard
+                    </div>
+                    <div style="color: #475569; font-size: 0.93rem; margin-top: 4px; max-width: 720px;">
+                        Monday-morning view for the <b style="color:{SLATE};">CEO</b>,
+                        <b style="color:{SLATE};">Head of Marketing</b>, and
+                        <b style="color:{SLATE};">Head of Sales/Revenue</b> — one page, three lenses on the same pipeline.
+                    </div>
+                </div>
+                <div style="text-align: right; font-size: 0.75rem; color: #64748B; letter-spacing: 0.04em;">
+                    <div style="font-weight: 700; color: {TEAL};">{date.today().strftime('%b %d, %Y')}</div>
+                    <div>45 active prospects</div>
+                    <div style="opacity: 0.7;">Mocked HubSpot pipeline</div>
+                </div>
             </div>
         </div>
         """,
         unsafe_allow_html=True,
     )
-    st.caption(f"Data as of {date.today().isoformat()} · 45 active prospects · Demo data (mocked HubSpot pipeline)")
 
     # ============================================================
     # CEO VIEW
