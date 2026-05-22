@@ -636,10 +636,27 @@ Upload → Auto-detect Supplier → Supplier Adapter → Canonical Schema
                 "These line items need a human decision before going into the final report. "
                 "In production, this becomes a Retool/Notion queue with approve/override actions."
             )
+
+            # Decisions persist in session_state, keyed per line item so they
+            # survive the rerun each button click triggers.
+            decisions = st.session_state.setdefault("review_decisions", {})
+
+            def _set_decision(rkey: str, value: str):
+                st.session_state["review_decisions"][rkey] = value
+
+            decided = sum(1 for r in review.itertuples()
+                          if decisions.get(f"{r.supplier_sku}|{r.raw_description}"))
+            st.caption(f"**{decided} of {len(review)}** reviewed.")
+
             for idx, row in review.iterrows():
+                rkey = f"{row['supplier_sku']}|{row['raw_description']}"
+                decision = decisions.get(rkey)
                 badge = status_badge(row["status"])
+                tag = {"approved": " · ✅ Approved",
+                       "rejected": " · ❌ Rejected",
+                       "override": " · ✏️ Overridden"}.get(decision, "")
                 with st.expander(
-                    f"{badge} · {row['raw_description'][:60]} · ${row['annual_spend']:,.0f} annual"
+                    f"{badge} · {row['raw_description'][:60]} · ${row['annual_spend']:,.0f} annual{tag}"
                 ):
                     cc1, cc2 = st.columns(2)
                     with cc1:
@@ -659,9 +676,30 @@ Upload → Auto-detect Supplier → Supplier Adapter → Canonical Schema
                     st.markdown(f"**Rationale:** {row['rationale']}")
                     st.markdown(f"**Confidence:** `{row['confidence']:.2f}`")
                     ac1, ac2, ac3 = st.columns(3)
-                    ac1.button("✅ Approve", key=f"approve_{idx}")
-                    ac2.button("❌ Reject", key=f"reject_{idx}")
-                    ac3.button("✏️ Override Match", key=f"override_{idx}")
+                    ac1.button("✅ Approve", key=f"approve_{idx}", use_container_width=True,
+                               on_click=_set_decision, args=(rkey, "approved"))
+                    ac2.button("❌ Reject", key=f"reject_{idx}", use_container_width=True,
+                               on_click=_set_decision, args=(rkey, "rejected"))
+                    ac3.button("✏️ Override Match", key=f"override_{idx}", use_container_width=True,
+                               on_click=_set_decision, args=(rkey, "override"))
+
+                    # Feedback + actions reflecting the recorded decision
+                    if decision == "approved":
+                        st.success("Approved — this match goes into the final savings report.")
+                    elif decision == "rejected":
+                        st.error("Rejected — excluded from the report and flagged to the catalog-gap list.")
+                    elif decision == "override":
+                        st.info("Override — pick the correct SourceClub item:")
+                        opts = ["— select —"] + [
+                            f"{r.sc_sku} — {r.description}" for r in catalog.itertuples()
+                        ]
+                        chosen = st.selectbox(
+                            "Correct SC match", opts, key=f"override_sel_{idx}",
+                            label_visibility="collapsed",
+                        )
+                        if chosen != "— select —":
+                            st.success(f"Re-matched to **{chosen}**. (POC: recorded in session; "
+                                       "production writes back to the run + audit log.)")
 
         # ---- No-match section ----
         no_match = results[results["status"] == "NO-MATCH"].copy()
