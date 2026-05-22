@@ -335,63 +335,6 @@ for k, v in T.items():
 st.markdown(css, unsafe_allow_html=True)
 
 
-# ---------- Auth gate ----------
-# Simple shared-passcode gate. Not real security — just keeps casual visitors out.
-# Override on Streamlit Cloud via Secrets ("passcode" = "...") if you want to change it.
-try:
-    PASSCODE = st.secrets["passcode"]
-except (FileNotFoundError, KeyError):
-    PASSCODE = "temp"
-
-
-def _render_login_screen():
-    st.markdown(
-        f"""
-<div style="max-width:460px; margin: 14vh auto 0 auto; padding: 36px 32px; background: {T['card_bg']}; border: 1px solid {T['card_border']}; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.35);">
-<div style="display:flex; align-items:center; gap:14px; margin-bottom: 20px;">
-<div style="width:48px; height:48px; border-radius:12px; background: linear-gradient(135deg, #0F766E 0%, #0EA5A1 100%); display:flex; align-items:center; justify-content:center; font-size:22px; color:white; box-shadow: 0 4px 12px rgba(15,118,110,0.4);">🦷</div>
-<div>
-<div style="font-size:1.4rem; font-weight:800; color:{T['text_strong']}; letter-spacing:-0.02em;">SourceClub Ops POC</div>
-<div style="font-size:0.82rem; color:{T['text_muted']}; letter-spacing:0.04em; text-transform:uppercase; font-weight:600;">Restricted Preview</div>
-</div>
-</div>
-<div style="color:{T['text_muted']}; font-size:0.92rem; line-height:1.55; margin-bottom: 18px;">
-This is a case-study deliverable for the Head of AI Powered Operations, Systems &amp; RevOps role at SourceClub. Access is gated to keep it out of public search results. Use the passcode shared in the submission email.
-</div>
-</div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-
-if "authenticated" not in st.session_state:
-    st.session_state["authenticated"] = False
-
-if not st.session_state["authenticated"]:
-    _render_login_screen()
-    # Centered input form below the card
-    _, mid, _ = st.columns([1, 2, 1])
-    with mid:
-        with st.form("login_form", clear_on_submit=False, border=False):
-            passcode_input = st.text_input(
-                "Passcode",
-                type="password",
-                placeholder="Enter passcode",
-                label_visibility="collapsed",
-            )
-            submitted = st.form_submit_button("🔓  Enter", use_container_width=True, type="primary")
-            if submitted:
-                if passcode_input == PASSCODE:
-                    st.session_state["authenticated"] = True
-                    st.rerun()
-                elif passcode_input == "":
-                    st.warning("Enter the passcode to continue.")
-                else:
-                    st.error("❌ Incorrect passcode. Please check the submission email.")
-    st.stop()
-
-
-
 @st.cache_data
 def load_catalog() -> pd.DataFrame:
     return pd.read_csv(CATALOG_PATH)
