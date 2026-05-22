@@ -30,7 +30,9 @@ python3 -m venv .venv
 .venv/bin/streamlit run app/main.py
 ```
 
-The app opens at `http://localhost:8501`. Land on the **Leadership Dashboard**, then click into **Savings Analysis** and pick any sample file from the dropdown.
+The app opens at `http://localhost:8501`. **Passcode: `temp`** (gated to keep the recruiter-facing demo out of public search results — once entered, it's remembered for the rest of your browser session). Land on the **Leadership Dashboard**, then click into **Savings Analysis** and pick any sample file from the dropdown.
+
+**To change the passcode** (e.g. on Streamlit Cloud): set `passcode = "..."` in Streamlit Secrets, or edit `PASSCODE` in `app/main.py`.
 
 ---
 

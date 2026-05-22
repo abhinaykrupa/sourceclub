@@ -10,9 +10,10 @@ Three persona-targeted sections on one page:
 from collections import Counter
 from datetime import date
 import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
 import streamlit as st
+
+# plotly imported lazily inside render() — saves ~2s on cold start when user
+# hasn't opened the dashboard tab yet
 
 from sync.pipeline_data import (
     build_pipeline,
@@ -93,9 +94,15 @@ def _kpi_card(label: str, value: str, delta: str = None, delta_color: str = "nor
     st.metric(label=label, value=value, delta=delta, delta_color=delta_color)
 
 
+@st.cache_data
+def _cached_pipeline():
+    return build_pipeline()
+
+
 def render():
+    import plotly.graph_objects as go  # lazy — only when dashboard tab is rendered
     t = _theme()
-    pipeline = build_pipeline()
+    pipeline = _cached_pipeline()
     df = pd.DataFrame(pipeline)
 
     # ---- Page header ----

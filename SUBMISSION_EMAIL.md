@@ -18,6 +18,7 @@ Thank you for the case study — it was a genuinely interesting problem to work 
 - **Written submission** (architecture, options, roadmap with $ impact, "My First 30 Days" plan): `https://github.com/abhinaykrupa/sourceclub/blob/main/SUBMISSION.md`
 - **Working POC** (Streamlit app you can drive end-to-end):
   - Live demo: `https://<your-app>.streamlit.app`
+  - **Passcode:** `temp` (the app is gated to keep it out of public search results)
   - Source: `https://github.com/abhinaykrupa/sourceclub`
   - README has local-install instructions if the live demo is down for any reason
 - **Video walkthrough** (3–5 min, screen-share through the three assignments + reasoning): `<Loom link>`
