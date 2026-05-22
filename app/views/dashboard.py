@@ -23,7 +23,44 @@ from sync.pipeline_data import (
 from app_helpers.email_drafter import draft_outreach_email
 
 
-# ---- Palette (matches .streamlit/config.toml) ----
+# ---- Theme-aware palette ----
+def _theme():
+    """Return color tokens based on current theme."""
+    is_dark = st.session_state.get("theme", "dark") == "dark"
+    if is_dark:
+        return {
+            "teal": "#14B8A6",
+            "sage": "#34D399",
+            "slate": "#F8FAFC",
+            "text_muted": "#94A3B8",
+            "card_bg": "#111A2C",
+            "card_border": "#1E293B",
+            "soft_bg": "#0F172A",
+            "amber": "#FBBF24",
+            "rose": "#FB7185",
+            "indigo": "#818CF8",
+            "chart_bg": "#0B1220",
+            "chart_paper": "#111A2C",
+            "grid": "#1E293B",
+        }
+    return {
+        "teal": "#0EA5A1",
+        "sage": "#10B981",
+        "slate": "#0F172A",
+        "text_muted": "#64748B",
+        "card_bg": "#FFFFFF",
+        "card_border": "#E2E8F0",
+        "soft_bg": "#F0F9F8",
+        "amber": "#F59E0B",
+        "rose": "#E11D48",
+        "indigo": "#6366F1",
+        "chart_bg": "#FFFFFF",
+        "chart_paper": "#FFFFFF",
+        "grid": "#E2E8F0",
+    }
+
+
+# Module-level fallbacks (used outside render)
 TEAL = "#0EA5A1"
 SAGE = "#10B981"
 SLATE = "#0F172A"
@@ -34,34 +71,19 @@ INDIGO = "#6366F1"
 
 
 def _section_header(icon: str, title: str, subtitle: str, accent: str = None):
-    accent = accent or TEAL
+    t = _theme()
+    accent = accent or t["teal"]
     st.markdown(
         f"""
-        <div style="margin-top: 1.8rem; margin-bottom: 0.8rem;
-                    padding: 18px 22px;
-                    background: linear-gradient(135deg, #FFFFFF 0%, {LIGHT_BG} 100%);
-                    border-radius: 12px;
-                    border: 1px solid #E2E8F0;
-                    border-left: 4px solid {accent};
-                    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="width: 38px; height: 38px; border-radius: 10px;
-                            background: linear-gradient(135deg, {accent} 0%, #0F766E 100%);
-                            display: flex; align-items: center; justify-content: center;
-                            font-size: 1.15rem; color: white;
-                            box-shadow: 0 2px 6px rgba(15, 118, 110, 0.25);">
-                    {icon}
-                </div>
-                <div>
-                    <div style="font-size: 1.18rem; font-weight: 800; color: {SLATE}; letter-spacing: -0.01em;">
-                        {title}
-                    </div>
-                    <div style="font-size: 0.86rem; color: #64748B; margin-top: 1px; font-weight: 500;">
-                        {subtitle}
-                    </div>
-                </div>
-            </div>
-        </div>
+<div style="margin-top: 1.8rem; margin-bottom: 0.8rem; padding: 18px 22px; background: linear-gradient(135deg, {t['card_bg']} 0%, {t['soft_bg']} 100%); border-radius: 12px; border: 1px solid {t['card_border']}; border-left: 4px solid {accent}; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);">
+<div style="display: flex; align-items: center; gap: 12px;">
+<div style="width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, {accent} 0%, #0F766E 100%); display: flex; align-items: center; justify-content: center; font-size: 1.15rem; color: white; box-shadow: 0 2px 6px rgba(15, 118, 110, 0.35);">{icon}</div>
+<div>
+<div style="font-size: 1.18rem; font-weight: 800; color: {t['slate']}; letter-spacing: -0.01em;">{title}</div>
+<div style="font-size: 0.86rem; color: {t['text_muted']}; margin-top: 1px; font-weight: 500;">{subtitle}</div>
+</div>
+</div>
+</div>
         """,
         unsafe_allow_html=True,
     )
@@ -72,34 +94,26 @@ def _kpi_card(label: str, value: str, delta: str = None, delta_color: str = "nor
 
 
 def render():
+    t = _theme()
     pipeline = build_pipeline()
     df = pd.DataFrame(pipeline)
 
     # ---- Page header ----
     st.markdown(
         f"""
-        <div style="padding: 14px 22px; margin-bottom: 6px;
-                    background: linear-gradient(135deg, #F0FDFA 0%, #FFFFFF 100%);
-                    border-radius: 12px; border: 1px solid #CCFBF1;">
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px;">
-                <div>
-                    <div style="font-size: 1.55rem; font-weight: 800; color: {SLATE};
-                                letter-spacing: -0.02em; line-height: 1.2;">
-                        Leadership Dashboard
-                    </div>
-                    <div style="color: #475569; font-size: 0.93rem; margin-top: 4px; max-width: 720px;">
-                        Monday-morning view for the <b style="color:{SLATE};">CEO</b>,
-                        <b style="color:{SLATE};">Head of Marketing</b>, and
-                        <b style="color:{SLATE};">Head of Sales/Revenue</b> — one page, three lenses on the same pipeline.
-                    </div>
-                </div>
-                <div style="text-align: right; font-size: 0.75rem; color: #64748B; letter-spacing: 0.04em;">
-                    <div style="font-weight: 700; color: {TEAL};">{date.today().strftime('%b %d, %Y')}</div>
-                    <div>45 active prospects</div>
-                    <div style="opacity: 0.7;">Mocked HubSpot pipeline</div>
-                </div>
-            </div>
-        </div>
+<div style="padding: 14px 22px; margin-bottom: 6px; background: linear-gradient(135deg, {t['soft_bg']} 0%, {t['card_bg']} 100%); border-radius: 12px; border: 1px solid {t['card_border']};">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+<div>
+<div style="font-size: 1.55rem; font-weight: 800; color: {t['slate']}; letter-spacing: -0.02em; line-height: 1.2;">Leadership Dashboard</div>
+<div style="color: {t['text_muted']}; font-size: 0.93rem; margin-top: 4px; max-width: 720px;">Monday-morning view for the <b style="color:{t['slate']};">CEO</b>, <b style="color:{t['slate']};">Head of Marketing</b>, and <b style="color:{t['slate']};">Head of Sales/Revenue</b> — one page, three lenses on the same pipeline.</div>
+</div>
+<div style="text-align: right; font-size: 0.75rem; color: {t['text_muted']}; letter-spacing: 0.04em;">
+<div style="font-weight: 700; color: {t['teal']};">{date.today().strftime('%b %d, %Y')}</div>
+<div>45 active prospects</div>
+<div style="opacity: 0.7;">Mocked HubSpot pipeline</div>
+</div>
+</div>
+</div>
         """,
         unsafe_allow_html=True,
     )
@@ -153,8 +167,8 @@ def render():
         fig.update_layout(
             height=320, margin=dict(l=0, r=0, t=10, b=10),
             xaxis_title="Count", yaxis_title="",
-            plot_bgcolor="white", paper_bgcolor="white",
-            font=dict(family="sans-serif", size=12, color=SLATE),
+            plot_bgcolor=t["chart_bg"], paper_bgcolor=t["chart_paper"],
+            font=dict(family="Inter, sans-serif", size=12, color=t["slate"]),
         )
         st.plotly_chart(fig, use_container_width=True)
 
@@ -176,8 +190,8 @@ def render():
         fig.update_layout(
             height=320, margin=dict(l=0, r=0, t=10, b=10),
             xaxis_title="", yaxis_title="$ savings identified",
-            plot_bgcolor="white", paper_bgcolor="white",
-            font=dict(family="sans-serif", size=12, color=SLATE),
+            plot_bgcolor=t["chart_bg"], paper_bgcolor=t["chart_paper"],
+            font=dict(family="Inter, sans-serif", size=12, color=t["slate"]),
         )
         st.plotly_chart(fig, use_container_width=True)
 
@@ -224,15 +238,15 @@ def render():
                 x=obj_df["frequency"],
                 y=obj_df["objection"],
                 orientation="h",
-                marker_color=AMBER,
+                marker_color=t["amber"],
                 text=obj_df["frequency"],
                 textposition="auto",
             ))
             fig.update_layout(
                 height=300, margin=dict(l=0, r=0, t=10, b=10),
                 xaxis_title="# prospects", yaxis_title="",
-                plot_bgcolor="white", paper_bgcolor="white",
-                font=dict(family="sans-serif", size=11, color=SLATE),
+                plot_bgcolor=t["chart_bg"], paper_bgcolor=t["chart_paper"],
+                font=dict(family="Inter, sans-serif", size=11, color=t["slate"]),
             )
             st.plotly_chart(fig, use_container_width=True)
 
@@ -309,15 +323,15 @@ def render():
             fig = go.Figure(go.Bar(
                 x=rep_metrics["rep"],
                 y=rep_metrics["wins"],
-                marker_color=TEAL,
+                marker_color=t["teal"],
                 text=[f"{w} wins<br>${m:,.0f} MRR" for w, m in zip(rep_metrics["wins"], rep_metrics["mrr"])],
                 textposition="outside",
             ))
             fig.update_layout(
                 height=320, margin=dict(l=0, r=0, t=30, b=10),
                 xaxis_title="", yaxis_title="Wins (MTD)",
-                plot_bgcolor="white", paper_bgcolor="white",
-                font=dict(family="sans-serif", size=12, color=SLATE),
+                plot_bgcolor=t["chart_bg"], paper_bgcolor=t["chart_paper"],
+                font=dict(family="Inter, sans-serif", size=12, color=t["slate"]),
             )
             st.plotly_chart(fig, use_container_width=True)
 

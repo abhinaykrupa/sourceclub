@@ -38,64 +38,87 @@ ROOT = Path(__file__).parent.parent
 CATALOG_PATH = ROOT / "sample_data" / "sourceclub_catalog.csv"
 SAMPLE_DIR = ROOT / "sample_data"
 
+# ---------- Theme state ----------
+if "theme" not in st.session_state:
+    st.session_state["theme"] = "dark"  # default to dark — modern fintech vibe
+
+THEME = st.session_state["theme"]
+IS_DARK = THEME == "dark"
+
+# Theme color tokens — used by Python (charts, SVG) and injected into CSS below
+if IS_DARK:
+    T = {
+        "bg":            "#0B1220",
+        "bg_soft":       "#0F172A",
+        "card_bg":       "#111A2C",
+        "card_border":   "#1E293B",
+        "text":          "#E2E8F0",
+        "text_muted":    "#94A3B8",
+        "text_strong":   "#F8FAFC",
+        "accent_teal":   "#14B8A6",
+        "accent_sage":   "#34D399",
+        "accent_amber":  "#FBBF24",
+        "code_bg":       "#0A1020",
+        "scroll_track":  "#1E293B",
+    }
+else:
+    T = {
+        "bg":            "#FAFCFC",
+        "bg_soft":       "#F0F9F8",
+        "card_bg":       "#FFFFFF",
+        "card_border":   "#E2E8F0",
+        "text":          "#0F172A",
+        "text_muted":    "#64748B",
+        "text_strong":   "#020617",
+        "accent_teal":   "#0EA5A1",
+        "accent_sage":   "#10B981",
+        "accent_amber":  "#F59E0B",
+        "code_bg":       "#0F172A",
+        "scroll_track":  "#E2E8F0",
+    }
+
 # ---------- Global styling ----------
-st.markdown("""
+CSS_TEMPLATE = """
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-    /* ---- Typography baseline ---- */
     html, body, [class*="css"], .stApp {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         font-feature-settings: 'cv11', 'ss01';
         -webkit-font-smoothing: antialiased;
+        color: __TEXT__;
     }
-
-    /* ---- Page background — soft healthcare gradient ---- */
     .stApp {
         background:
-            radial-gradient(ellipse at top right, rgba(14, 165, 161, 0.045) 0%, transparent 50%),
-            radial-gradient(ellipse at bottom left, rgba(16, 185, 129, 0.035) 0%, transparent 50%),
-            #FAFCFC;
+            radial-gradient(ellipse at top right, rgba(20, 184, 166, 0.06) 0%, transparent 50%),
+            radial-gradient(ellipse at bottom left, rgba(52, 211, 153, 0.05) 0%, transparent 50%),
+            __BG__;
     }
-
-    /* ---- Container ---- */
     .block-container {
         padding-top: 2.5rem !important;
         padding-bottom: 3rem;
         max-width: 1320px;
     }
-
-    /* ---- Hero header section ---- */
     .sc-hero {
         background: linear-gradient(135deg, #0F766E 0%, #0EA5A1 50%, #14B8A6 100%);
         border-radius: 16px;
         padding: 28px 32px;
         margin-bottom: 22px;
         color: white;
-        box-shadow:
-            0 4px 24px rgba(15, 118, 110, 0.18),
-            0 1px 2px rgba(15, 23, 42, 0.04);
+        box-shadow: 0 4px 24px rgba(15, 118, 110, 0.18), 0 1px 2px rgba(15, 23, 42, 0.04);
         position: relative;
         overflow: hidden;
     }
     .sc-hero::before {
-        content: "";
-        position: absolute;
-        top: -40%;
-        right: -10%;
-        width: 380px;
-        height: 380px;
+        content: ""; position: absolute; top: -40%; right: -10%;
+        width: 380px; height: 380px;
         background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);
         pointer-events: none;
     }
     .sc-hero::after {
-        content: "";
-        position: absolute;
-        bottom: -30%;
-        left: 15%;
-        width: 200px;
-        height: 200px;
+        content: ""; position: absolute; bottom: -30%; left: 15%;
+        width: 200px; height: 200px;
         background: radial-gradient(circle, rgba(94,234,212,0.18) 0%, transparent 70%);
         pointer-events: none;
     }
@@ -103,21 +126,14 @@ st.markdown("""
     .sc-hero-text { flex: 1; }
     .sc-wordmark {
         font-family: 'Inter', sans-serif;
-        font-size: 2.05rem;
-        font-weight: 800;
-        line-height: 1.15;
-        letter-spacing: -0.025em;
-        color: white;
-        padding-top: 4px;
-        margin: 0;
+        font-size: 2.05rem; font-weight: 800; line-height: 1.15;
+        letter-spacing: -0.025em; color: white;
+        padding-top: 4px; margin: 0;
     }
     .sc-subtitle {
-        font-size: 0.85rem;
-        font-weight: 500;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: rgba(255,255,255,0.78);
-        margin-top: 4px;
+        font-size: 0.85rem; font-weight: 500;
+        letter-spacing: 0.08em; text-transform: uppercase;
+        color: rgba(255,255,255,0.78); margin-top: 4px;
     }
     .sc-pill {
         display: inline-flex; align-items: center; gap: 6px;
@@ -126,181 +142,196 @@ st.markdown("""
         border: 1px solid rgba(255,255,255,0.22);
         padding: 5px 12px; border-radius: 999px;
         font-size: 0.72rem; font-weight: 600;
-        color: white;
-        letter-spacing: 0.04em;
+        color: white; letter-spacing: 0.04em;
     }
     .sc-pill-dot {
         width: 7px; height: 7px; border-radius: 50%;
         background: #6EE7B7; box-shadow: 0 0 8px #6EE7B7;
     }
     .sc-tagline {
-        color: #475569;
-        font-size: 0.95rem;
-        line-height: 1.55;
-        max-width: 920px;
-        margin-bottom: 14px;
+        color: __TEXT_MUTED__;
+        font-size: 0.95rem; line-height: 1.55;
+        max-width: 920px; margin-bottom: 14px;
     }
-    .sc-tagline b { color: #0F172A; font-weight: 700; }
+    .sc-tagline b { color: __TEXT_STRONG__; font-weight: 700; }
 
-    /* ---- Metric cards: accent stripe + better hierarchy ---- */
     [data-testid="stMetric"] {
-        background: #FFFFFF;
-        border: 1px solid #E2E8F0;
+        background: __CARD_BG__;
+        border: 1px solid __CARD_BORDER__;
         border-radius: 10px;
         padding: 16px 18px 18px 18px;
-        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.03);
-        position: relative;
-        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18), 0 1px 2px rgba(0, 0, 0, 0.12);
+        position: relative; overflow: hidden;
         transition: box-shadow 0.18s ease, transform 0.18s ease;
     }
     [data-testid="stMetric"]::before {
-        content: "";
-        position: absolute; top: 0; left: 0; right: 0;
-        height: 3px;
-        background: linear-gradient(90deg, #0EA5A1 0%, #10B981 100%);
+        content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+        background: linear-gradient(90deg, __ACCENT_TEAL__ 0%, __ACCENT_SAGE__ 100%);
     }
     [data-testid="stMetric"]:hover {
-        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.22), 0 1px 2px rgba(0, 0, 0, 0.12);
         transform: translateY(-1px);
     }
     [data-testid="stMetricLabel"] > div {
-        color: #64748B; font-size: 0.78rem; font-weight: 600;
+        color: __TEXT_MUTED__; font-size: 0.78rem; font-weight: 600;
         text-transform: uppercase; letter-spacing: 0.06em;
     }
     [data-testid="stMetricValue"] {
-        color: #0F172A; font-size: 1.85rem; font-weight: 800;
+        color: __TEXT_STRONG__; font-size: 1.85rem; font-weight: 800;
         letter-spacing: -0.02em; line-height: 1.2;
     }
     [data-testid="stMetricDelta"] { font-size: 0.78rem; font-weight: 600; }
 
-    /* ---- Tab list ---- */
     .stTabs [data-baseweb="tab-list"] {
         gap: 2px;
-        border-bottom: 1px solid #E2E8F0;
+        border-bottom: 1px solid __CARD_BORDER__;
         padding-bottom: 2px;
     }
     .stTabs [data-baseweb="tab"] {
         padding: 12px 22px 14px 22px;
         background: transparent;
         border-radius: 10px 10px 0 0;
-        font-weight: 600;
-        font-size: 0.92rem;
-        color: #64748B;
+        font-weight: 600; font-size: 0.92rem;
+        color: __TEXT_MUTED__;
         transition: all 0.15s ease;
         margin-bottom: -1px;
     }
     .stTabs [data-baseweb="tab"]:hover {
-        color: #0F766E;
-        background: rgba(14, 165, 161, 0.05);
+        color: __ACCENT_TEAL__;
+        background: __BG_SOFT__;
     }
     .stTabs [aria-selected="true"] {
-        background: linear-gradient(180deg, #F0FDFA 0%, #FFFFFF 100%) !important;
-        color: #0F766E !important;
-        border-bottom: 2px solid #0EA5A1 !important;
+        background: __BG_SOFT__ !important;
+        color: __ACCENT_TEAL__ !important;
+        border-bottom: 2px solid __ACCENT_TEAL__ !important;
     }
 
-    /* ---- Section headers (h2 / h3) ---- */
+    h1, h2, h3, h4, h5, h6,
+    .stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
+        color: __TEXT_STRONG__ !important; letter-spacing: -0.02em;
+    }
     h2, .stMarkdown h2 {
-        color: #0F172A; font-weight: 800;
-        letter-spacing: -0.02em;
+        font-weight: 800;
         margin-top: 1.3rem; margin-bottom: 0.5rem;
     }
-    h3, .stMarkdown h3 { color: #0F172A; font-weight: 700; letter-spacing: -0.01em; }
-    .stSubheader, .stMarkdown h2 + p { color: #475569; }
+    h3, .stMarkdown h3 { font-weight: 700; letter-spacing: -0.01em; }
+    .stMarkdown p, .stMarkdown li, .stMarkdown b { color: __TEXT__; }
 
-    /* ---- Expanders ---- */
     .streamlit-expanderHeader, [data-testid="stExpander"] summary {
-        font-size: 0.93rem;
-        font-weight: 600;
+        font-size: 0.93rem; font-weight: 600;
+        color: __TEXT__;
     }
     [data-testid="stExpander"] {
-        border: 1px solid #E2E8F0;
+        border: 1px solid __CARD_BORDER__;
         border-radius: 8px;
-        background: #FFFFFF;
+        background: __CARD_BG__;
+    }
+    [data-testid="stExpander"] details > div {
+        background: __CARD_BG__;
     }
 
-    /* ---- DataFrames ---- */
     [data-testid="stDataFrame"] {
-        border-radius: 8px;
-        overflow: hidden;
-        border: 1px solid #E2E8F0;
+        border-radius: 8px; overflow: hidden;
+        border: 1px solid __CARD_BORDER__;
     }
 
-    /* ---- Buttons ---- */
     .stButton > button {
         border-radius: 8px;
-        font-weight: 600;
-        font-size: 0.9rem;
+        font-weight: 600; font-size: 0.9rem;
         padding: 8px 16px;
-        border: 1px solid #E2E8F0;
-        background: #FFFFFF;
-        color: #0F172A;
+        border: 1px solid __CARD_BORDER__;
+        background: __CARD_BG__;
+        color: __TEXT__;
         transition: all 0.15s ease;
     }
     .stButton > button:hover {
-        border-color: #0EA5A1;
-        color: #0F766E;
-        box-shadow: 0 2px 6px rgba(14, 165, 161, 0.12);
-    }
-    .stButton > button[kind="primary"] {
-        background: linear-gradient(135deg, #0F766E 0%, #0EA5A1 100%);
-        color: white;
-        border: none;
+        border-color: __ACCENT_TEAL__;
+        color: __ACCENT_TEAL__;
+        box-shadow: 0 2px 6px rgba(14, 165, 161, 0.18);
     }
     .stDownloadButton > button {
-        background: linear-gradient(135deg, #0F766E 0%, #0EA5A1 100%);
-        color: white;
+        background: linear-gradient(135deg, #0F766E 0%, __ACCENT_TEAL__ 100%);
+        color: white !important;
         border: none;
         border-radius: 8px;
-        font-weight: 600;
-        padding: 9px 16px;
-        box-shadow: 0 1px 3px rgba(15, 118, 110, 0.25);
+        font-weight: 600; padding: 9px 16px;
+        box-shadow: 0 1px 3px rgba(15, 118, 110, 0.32);
     }
     .stDownloadButton > button:hover {
         background: linear-gradient(135deg, #134E4A 0%, #0F766E 100%);
-        box-shadow: 0 3px 8px rgba(15, 118, 110, 0.32);
+        box-shadow: 0 3px 10px rgba(15, 118, 110, 0.4);
         transform: translateY(-1px);
     }
 
-    /* ---- Captions ---- */
-    .stCaption, [data-testid="stCaptionContainer"] {
-        color: #64748B; font-size: 0.82rem;
+    .stCaption, [data-testid="stCaptionContainer"], .stMarkdown small {
+        color: __TEXT_MUTED__ !important; font-size: 0.82rem;
     }
 
-    /* ---- File uploader ---- */
     [data-testid="stFileUploader"] section {
-        border: 2px dashed #CBD5E1;
-        background: #F8FAFC;
+        border: 2px dashed __CARD_BORDER__;
+        background: __BG_SOFT__;
         border-radius: 10px;
         padding: 18px;
         transition: all 0.15s ease;
     }
     [data-testid="stFileUploader"] section:hover {
-        border-color: #0EA5A1;
-        background: #F0FDFA;
+        border-color: __ACCENT_TEAL__;
+    }
+    [data-testid="stFileUploader"] label, [data-testid="stFileUploader"] section div {
+        color: __TEXT__ !important;
     }
 
-    /* ---- Code blocks (architecture diagrams) ---- */
     code, pre {
         font-family: 'JetBrains Mono', 'Menlo', monospace !important;
         font-size: 0.8rem !important;
     }
     pre {
-        background: #0F172A !important;
+        background: __CODE_BG__ !important;
         color: #E2E8F0 !important;
         border-radius: 8px !important;
         padding: 16px !important;
+        border: 1px solid __CARD_BORDER__ !important;
+    }
+    code {
+        background: __BG_SOFT__ !important;
+        color: __ACCENT_TEAL__ !important;
+        padding: 2px 6px !important;
+        border-radius: 4px !important;
+    }
+    pre code {
+        background: transparent !important;
+        color: #E2E8F0 !important;
+        padding: 0 !important;
     }
 
-    /* ---- Subtle horizontal rule ---- */
     hr {
-        border: none;
-        height: 1px;
-        background: linear-gradient(90deg, transparent 0%, #CBD5E1 50%, transparent 100%);
+        border: none; height: 1px;
+        background: linear-gradient(90deg, transparent 0%, __CARD_BORDER__ 50%, transparent 100%);
         margin: 1.4rem 0;
     }
+
+    /* Selectbox / multiselect / inputs */
+    .stSelectbox > div > div, .stMultiSelect > div > div, .stTextInput > div > div > input,
+    .stTextArea > div > div > textarea {
+        background-color: __CARD_BG__ !important;
+        color: __TEXT__ !important;
+        border-color: __CARD_BORDER__ !important;
+    }
+
+    /* Theme toggle button (custom styling for the toggle) */
+    .theme-toggle {
+        position: fixed;
+        top: 60px;
+        right: 24px;
+        z-index: 999;
+    }
 </style>
-""", unsafe_allow_html=True)
+"""
+
+css = CSS_TEMPLATE
+for k, v in T.items():
+    css = css.replace(f"__{k.upper()}__", v)
+st.markdown(css, unsafe_allow_html=True)
 
 
 @st.cache_data
@@ -320,50 +351,31 @@ def status_badge(status: str) -> str:
 
 # ---------- App header ----------
 
-SC_LOGO_SVG = """
-<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
-  <defs>
-    <linearGradient id="sclogo" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95"/>
-      <stop offset="100%" stop-color="#E6FFFA" stop-opacity="0.9"/>
-    </linearGradient>
-  </defs>
-  <rect x="2" y="2" width="56" height="56" rx="14"
-        fill="rgba(255,255,255,0.12)"
-        stroke="rgba(255,255,255,0.32)" stroke-width="1.5"/>
-  <!-- stylized tooth/shield -->
-  <path d="M30 14 C23 14 18 18 18 25 C18 30 20.5 34 23 40 C24.5 43.5 26 46 30 46 C34 46 35.5 43.5 37 40 C39.5 34 42 30 42 25 C42 18 37 14 30 14 Z"
-        fill="url(#sclogo)"/>
-  <!-- inner highlight stroke -->
-  <path d="M30 20 C26 20 23 22.5 23 26 C23 29 25 32 26.5 35.5"
-        stroke="rgba(15,118,110,0.42)" stroke-width="2" stroke-linecap="round" fill="none"/>
-  <!-- accent dot suggesting "savings" / value -->
-  <circle cx="36" cy="22" r="2.5" fill="#5EEAD4"/>
-</svg>
-"""
+# Theme toggle row (top-right)
+toggle_col_l, toggle_col_r = st.columns([6, 1])
+with toggle_col_r:
+    toggle_label = "☀️  Light Mode" if IS_DARK else "🌙  Dark Mode"
+    if st.button(toggle_label, key="theme_toggle", use_container_width=True):
+        st.session_state["theme"] = "light" if IS_DARK else "dark"
+        st.rerun()
+
+SC_LOGO_SVG = '<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;"><defs><linearGradient id="sclogo" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95"/><stop offset="100%" stop-color="#E6FFFA" stop-opacity="0.9"/></linearGradient></defs><rect x="2" y="2" width="56" height="56" rx="14" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.32)" stroke-width="1.5"/><path d="M30 14 C23 14 18 18 18 25 C18 30 20.5 34 23 40 C24.5 43.5 26 46 30 46 C34 46 35.5 43.5 37 40 C39.5 34 42 30 42 25 C42 18 37 14 30 14 Z" fill="url(#sclogo)"/><path d="M30 20 C26 20 23 22.5 23 26 C23 29 25 32 26.5 35.5" stroke="rgba(15,118,110,0.42)" stroke-width="2" stroke-linecap="round" fill="none"/><circle cx="36" cy="22" r="2.5" fill="#5EEAD4"/></svg>'
 
 st.markdown(f"""
 <div class="sc-hero">
-    <div class="sc-hero-row">
-        {SC_LOGO_SVG}
-        <div class="sc-hero-text">
-            <div class="sc-wordmark">SourceClub</div>
-            <div class="sc-subtitle">Operations Platform · Case Study POC</div>
-        </div>
-        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
-            <div class="sc-pill"><span class="sc-pill-dot"></span> LIVE · MOCK DATA</div>
-            <div style="font-size:0.72rem; color:rgba(255,255,255,0.7); letter-spacing:0.04em;">
-                Built for CEO · Marketing · Sales
-            </div>
-        </div>
-    </div>
+<div class="sc-hero-row">
+{SC_LOGO_SVG}
+<div class="sc-hero-text">
+<div class="sc-wordmark">SourceClub</div>
+<div class="sc-subtitle">Operations Platform · Case Study POC</div>
 </div>
-
-<div class="sc-tagline">
-    Case-study deliverable for the <b>Head of AI Powered Operations, Systems &amp; RevOps</b> role.
-    Three lean prototypes — savings-analysis automation, Stripe↔HubSpot multi-location sync, 90-day project roadmap —
-    fronted by a <b>leadership dashboard</b> with persona views for the CEO, Head of Marketing, and Head of Sales/Revenue.
+<div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+<div class="sc-pill"><span class="sc-pill-dot"></span> LIVE · MOCK DATA</div>
+<div style="font-size:0.72rem; color:rgba(255,255,255,0.7); letter-spacing:0.04em;">Built for CEO · Marketing · Sales</div>
 </div>
+</div>
+</div>
+<div class="sc-tagline">Case-study deliverable for the <b>Head of AI Powered Operations, Systems &amp; RevOps</b> role. Three lean prototypes — savings-analysis automation, Stripe↔HubSpot multi-location sync, 90-day project roadmap — fronted by a <b>leadership dashboard</b> with persona views for the CEO, Head of Marketing, and Head of Sales/Revenue.</div>
 """, unsafe_allow_html=True)
 
 tab_dash, tab_sa, tab_sync, tab_roadmap = st.tabs([
@@ -818,52 +830,62 @@ with tab_roadmap:
         "every prospect needs a savings analysis. That's two engines that get faster with automation."
     )
 
+    st.caption(
+        "**Sizing context:** estimates calibrated to ~500 members, ~$2.5M ARR, 4–7 employees. "
+        "SourceClub makes flat membership fees — not a % of supplier GMV — so I separate "
+        "*SourceClub revenue impact* from *member value delivered* (which drives retention indirectly)."
+    )
+
     proposed = pd.DataFrame([
         {"ID": "NEW-1", "Proposed Project": "Supplier API Integrations (Benco, Henry Schein)",
-         "Category": "Data", "Effort": "4–6 weeks", "Impact": "★★★★★",
-         "Annual $ Impact": "$200K", "Mechanism": "Eliminates manual export step. Enables real-time price-drift detection. Cuts analyst time from 10 min → 0.",
-         "Why": "Eliminates the manual export step in savings analysis. Enables real-time price-drift detection."},
+         "Category": "Data", "Effort": "4–6 weeks", "Impact": "★★★★☆",
+         "Annual $ Impact": "+$50K ARR",
+         "Mechanism": "Faster SA turnaround → ~10 extra closes/yr × ~$5K ACV. Also ~$15K analyst time saved."},
         {"ID": "NEW-2", "Proposed Project": "Catalog Drift Monitor",
-         "Category": "Trust", "Effort": "1 week", "Impact": "★★★★☆",
-         "Annual $ Impact": "$40K retained MRR", "Mechanism": "Prevents 2 churns/yr × $20K ACV × 80% confidence.",
-         "Why": "Daily diff of supplier prices vs SC catalog. Alerts when any item moves >5%. Prevents the 'we promised $X' churn scenario."},
+         "Category": "Trust", "Effort": "1 week", "Impact": "★★★☆☆",
+         "Annual $ Impact": "+$15K retained ARR",
+         "Mechanism": "Prevents ~3 trust-driven churns/yr × $5K ACV. Cheap insurance."},
         {"ID": "NEW-3", "Proposed Project": "Member Spend Forecast + Drop Alert",
          "Category": "Retention", "Effort": "2 weeks", "Impact": "★★★★☆",
-         "Annual $ Impact": "$75K retained MRR", "Mechanism": "Catches 5 churn-risk members/yr × 6mo earlier × $1.25K/mo each.",
-         "Why": "Forecast monthly spend per member from ZenOne data. Alert CS owner when spend drops >25% MoM. Earliest churn signal."},
+         "Annual $ Impact": "+$25K retained ARR",
+         "Mechanism": "Catches 5 at-risk members 60 days earlier → 5 × $5K saved churn."},
         {"ID": "NEW-4", "Proposed Project": "Cross-Sell Recommender",
-         "Category": "Expansion", "Effort": "2–3 weeks", "Impact": "★★★☆☆",
-         "Annual $ Impact": "$120K GMV", "Mechanism": "5% of members add 1 cross-sell category × $X avg basket lift.",
-         "Why": "Members who buy X also buy Y, often at 30% markup elsewhere. Surfaces savings the member doesn't know about."},
+         "Category": "Member Value", "Effort": "2–3 weeks", "Impact": "★★★☆☆",
+         "Annual $ Impact": "+$15K retained ARR",
+         "Mechanism": "Member-value play. Drives NPS + renewal. Indirect revenue, not direct margin capture."},
         {"ID": "NEW-5", "Proposed Project": "Prospect Auto-Enrichment",
          "Category": "Sales Velocity", "Effort": "1–2 weeks", "Impact": "★★★☆☆",
-         "Annual $ Impact": "$60K (sales hours saved)", "Mechanism": "Saves 15min/discovery × 20 calls/wk × $100/hr loaded rate.",
-         "Why": "Given a practice domain, auto-pull location count, specialty mix, likely supplier. Shortens discovery from 30 → 15 min."},
+         "Annual $ Impact": "+$35K (sales hours + cycle compression)",
+         "Mechanism": "8 hrs/wk × $90/hr × 50 wks = $36K. Plus 1-2 extra deals from faster cycle."},
         {"ID": "NEW-6", "Proposed Project": "AI Quote Bot for Members",
          "Category": "Member Experience", "Effort": "3 weeks", "Impact": "★★★☆☆",
-         "Annual $ Impact": "$80K GMV + retention", "Mechanism": "Faster order velocity + reduces 'I forgot to order' churn driver.",
-         "Why": "Slack/email bot: 'What's my best price for nitrile gloves medium?' Returns SC price + comparison."},
+         "Annual $ Impact": "+$30K retention + UX",
+         "Mechanism": "Reduces 'I forgot to order' churn driver; small but compounding LTV impact."},
         {"ID": "NEW-7", "Proposed Project": "Win/Loss Auto-Analysis",
          "Category": "Sales Ops", "Effort": "1 week", "Impact": "★★☆☆☆",
-         "Annual $ Impact": "$30K (conversion lift)", "Mechanism": "LLM finds 2-3 messaging insights/qtr → 2pp conversion improvement.",
-         "Why": "LLM digests HubSpot closed-won/lost notes monthly. Surfaces top 3 objections + segments that convert. Feeds back into messaging."},
+         "Annual $ Impact": "+$10K (positioning lift)",
+         "Mechanism": "1-2 extra deals/yr. Real value is messaging that compounds — strategic, not point-ROI."},
         {"ID": "NEW-8", "Proposed Project": "Smart Order Routing",
-         "Category": "Margin", "Effort": "4 weeks", "Impact": "★★★★☆",
-         "Annual $ Impact": "$400K GMV", "Mechanism": "8% margin lift on $5M routed GMV. Needs ZenOne + supplier APIs first.",
-         "Why": "Given a member order, auto-route to lowest-cost supplier with stock. Production-grade lift."},
+         "Category": "Member Value", "Effort": "4 weeks", "Impact": "★★★☆☆",
+         "Annual $ Impact": "+$30K retained ARR",
+         "Mechanism": "Member-value play. Drives retention + referrals. Not direct margin to SourceClub."},
         {"ID": "NEW-9", "Proposed Project": "Internal AI Knowledge Search",
-         "Category": "Team Velocity", "Effort": "1–2 weeks", "Impact": "★★★☆☆",
-         "Annual $ Impact": "$70K (FTE-equivalent)", "Mechanism": "Saves ~5hrs/wk across 7-person team × $100/hr loaded.",
-         "Why": "All SOPs, member notes, supplier contracts indexed. 'When does the Schein contract renew?' answered in 5 sec."},
+         "Category": "Team Velocity", "Effort": "1–2 weeks", "Impact": "★★★★☆",
+         "Annual $ Impact": "+$60K (FTE-equivalent)",
+         "Mechanism": "5 hrs/wk × 6 people × $90/hr × 50 wks = $135K theoretical; halved for adoption reality."},
         {"ID": "NEW-10", "Proposed Project": "Onboarding Time-to-First-Order Tracker",
          "Category": "Activation", "Effort": "1 week", "Impact": "★★★☆☆",
-         "Annual $ Impact": "$50K retained MRR", "Mechanism": "Catches stalled onboardings 2wk earlier → reduces early-stage churn.",
-         "Why": "Single metric: contract-signed → first ZenOne order. Drives every onboarding decision."},
+         "Annual $ Impact": "+$20K retained ARR",
+         "Mechanism": "Catches 5 stalled onboardings/yr before early-churn × $4K avg ARR each."},
     ])
     st.dataframe(proposed, use_container_width=True, hide_index=True)
 
-    total_impact = 200 + 40 + 75 + 120 + 60 + 80 + 30 + 400 + 70 + 50
-    st.caption(f"💰 **Aggregate annual $ impact if all 10 projects ship: ~${total_impact}K.** These are first-order estimates — defensible directionally, not point-precise.")
+    total_impact = 50 + 15 + 25 + 15 + 35 + 30 + 10 + 30 + 60 + 20
+    st.caption(
+        f"💰 **Aggregate annual $ impact: ~${total_impact}K/yr** (~12% revenue lift on $2.5M ARR base) "
+        f"if all 10 ship in year one. Defensible-directionally estimates, not point-precise. "
+        f"Most projects cost <2 engineer-weeks — ROI is strong even at half these numbers."
+    )
 
     st.divider()
     st.subheader("📈 Full 90-Day Sequencing View")

@@ -1,12 +1,13 @@
 [theme]
-# Modern healthcare palette — teal-blue + sage green
-# Inspired by One Medical, Forward, Oscar Health visual language
-primaryColor = "#0EA5A1"
-backgroundColor = "#FFFFFF"
-secondaryBackgroundColor = "#F0F9F8"
-textColor = "#0F172A"
+# Modern healthcare-fintech palette — teal-blue + sage green
+# In-app toggle (top-right) overrides this for the page surface.
+# Default = dark; toggle for light mode.
+primaryColor = "#14B8A6"
+backgroundColor = "#0B1220"
+secondaryBackgroundColor = "#111A2C"
+textColor = "#E2E8F0"
 font = "sans serif"
-base = "light"
+base = "dark"
 
 [server]
 headless = true

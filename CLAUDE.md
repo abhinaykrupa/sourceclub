@@ -46,7 +46,11 @@ README.md                  Recruiter-facing install + demo guide
 assignments.md             ⚠️ Original brief — read this first for any scope question
 ```
 
-The `case_study/` folder contains an earlier Gemini-generated draft (kept for reference). The canonical deliverable is `SUBMISSION.md` in the root.
+The earlier Gemini-generated `case_study/` drafts were removed during cleanup. The canonical deliverables in the repo root are:
+- `SUBMISSION.md` — what the recruiter reads
+- `SUBMISSION_EMAIL.md` — the email draft to send
+- `SECURITY_REVIEW.md` — security analysis of the POC + production gates
+- `PRODUCTION_ARCHITECTURE.md` — the "what does v1 production look like" doc
 
 ## Architecture notes
 

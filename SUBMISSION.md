@@ -4,17 +4,23 @@
 **Role:** Head of AI Powered Operations, Systems & RevOps
 **Submitted:** May 21, 2026
 
+**🔗 Live demo:** `https://<your-app>.streamlit.app`  (TODO: replace after Streamlit Cloud deploy)
+**💻 Code:** `https://github.com/abhinaykrupa/sourceclub`
+**🎥 Video walkthrough:** `<Loom link>` (3–5 min)
+**🔒 Security review:** [`SECURITY_REVIEW.md`](./SECURITY_REVIEW.md) — what's safe in the POC, what's required for real data
+**🏗️ Production architecture:** [`PRODUCTION_ARCHITECTURE.md`](./PRODUCTION_ARCHITECTURE.md) — vendor picks, cost model, scaling plan, 6-8 week build path
+
 ---
 
 ## TL;DR
 
-Three deliverables, one repo, one demo URL. Built to be used by the **CEO, Head of Marketing, and Head of Sales/Revenue** — not just an analyst — so the app opens on a **Leadership Dashboard** with three persona-targeted sections before drilling into the individual workflows.
+Three deliverables, one repo, one demo URL. Built for the **CEO, Head of Marketing, and Head of Sales/Revenue** — not just a back-office analyst — so the app opens on a **Leadership Dashboard** with three persona-targeted sections before drilling into the individual workflows.
 
-- **Assignment 1:** Working POC that auto-detects supplier (Benco / Henry Schein / Darby / Base86 / Patterson), parses the file, runs a 3-stage matching engine with UOM/pack-size verification, and produces (a) a savings report, (b) a branded PDF for the prospect, and (c) an AI-drafted follow-up email.
-- **Assignment 2:** Recommended **custom sync + canonical mapping table** over native or middleware-only options. Mocked end-to-end in the POC.
-- **Assignment 3:** Prioritized the existing queue by **dependency, not urgency**. Added 10 net-new projects with explicit **dollar impact estimates** totaling **~$1.1M in annual value** if all shipped.
+- **Assignment 1.** Working POC that auto-detects supplier (Benco / Henry Schein / Darby / Base86 / Patterson), parses the file, runs a 3-stage matching engine with UOM/pack-size verification, and produces (a) an interactive savings report, (b) a **branded PDF** for the prospect, and (c) an **AI-drafted follow-up email**.
+- **Assignment 2.** Recommended **custom sync + canonical mapping table** over native or middleware-only options. Mocked end-to-end in the POC including multi-location billing rollups and an exception queue for unmapped customers.
+- **Assignment 3.** Prioritized the existing queue by **dependency, not urgency**. Added **10 net-new projects** with explicit **dollar impact estimates** totaling **~$1.1M in annual value** if all shipped, plus a day-by-day **First 30 Days** plan.
 
-Runs locally with `pip install` + `streamlit run`. Live demo + code at `github.com/abhinaykrupa/sourceclub`.
+Runs locally with `pip install` + `streamlit run` (~2 min). All LLM calls and external APIs are mocked and clearly labeled; production swap-in points are documented inline.
 
 ---
 
@@ -252,20 +258,24 @@ Sequence by **dependency and revenue leverage**, not just urgency labels. The fi
 
 These come from thinking about SourceClub's flywheel: every member buys monthly (recurring data source), every prospect needs an SA (recurring opportunity). Two engines that get faster with automation.
 
+**Sizing context.** Numbers below are calibrated to ~500 members, ~$2.5M ARR, 4–7 employees. SourceClub makes flat membership fees — **not** a % of supplier GMV — so I separate "SourceClub revenue impact" from "member value delivered" (which drives retention indirectly).
+
 | ID | Project | Effort | Annual $ Impact | Mechanism |
 |---|---|---|---|---|
-| **NEW-1** | Supplier API Integrations (Benco, Henry Schein) | 4–6 wk | **$200K** | Eliminates manual export step. Enables real-time price-drift detection. Cuts analyst time from 10 min → 0 per SA. |
-| **NEW-2** | Catalog Drift Monitor | 1 wk | **$40K retained MRR** | Prevents ~2 churns/yr × $20K ACV × 80% confidence. |
-| **NEW-3** | Member Spend Forecast + Drop Alert | 2 wk | **$75K retained MRR** | Catches ~5 churn-risk members/yr × 6 mo earlier intervention × $1.25K/mo. |
-| **NEW-4** | Cross-Sell Recommender | 2–3 wk | **$120K GMV** | 5% of members add 1 cross-sell category × avg basket lift. |
-| **NEW-5** | Prospect Auto-Enrichment | 1–2 wk | **$60K (sales hours)** | Saves 15 min/discovery × ~20 calls/wk × $100/hr loaded rate. |
-| **NEW-6** | AI Quote Bot for Members | 3 wk | **$80K GMV + retention** | Faster order velocity + reduces "I forgot to order" churn driver. |
-| **NEW-7** | Win/Loss Auto-Analysis | 1 wk | **$30K (conversion lift)** | LLM finds 2–3 messaging insights/qtr → ~2pp conversion improvement. |
-| **NEW-8** | Smart Order Routing | 4 wk | **$400K GMV** | 8% margin lift on $5M routed GMV. Needs ZenOne + supplier APIs first. |
-| **NEW-9** | Internal AI Knowledge Search | 1–2 wk | **$70K (FTE-equiv)** | Saves ~5 hrs/wk across 7-person team × $100/hr loaded. |
-| **NEW-10** | Onboarding Time-to-First-Order Tracker | 1 wk | **$50K retained MRR** | Catches stalled onboardings 2 wk earlier → reduces early-stage churn. |
+| **NEW-1** | Supplier API Integrations (Benco, Henry Schein) | 4–6 wk | **+$50K ARR** | Faster SA turnaround → ~10 extra closes/yr × ~$5K avg ACV. Eliminates analyst time too (~$15K labor saved); main value is sales velocity. |
+| **NEW-2** | Catalog Drift Monitor | 1 wk | **+$15K retained ARR** | Prevents ~3 trust-driven churns/yr × $5K avg ACV. Cheap insurance. |
+| **NEW-3** | Member Spend Forecast + Drop Alert | 2 wk | **+$25K retained ARR** | Catches 5 at-risk members 60 days earlier → saves 5 × $5K = $25K of would-be churn. |
+| **NEW-4** | Cross-Sell Recommender | 2–3 wk | **+$15K retained ARR** (member-value play) | Members feel more value → measurable in NPS + renewal rates. Indirect revenue, not direct margin. |
+| **NEW-5** | Prospect Auto-Enrichment | 1–2 wk | **+$35K (sales hours saved + cycle compression)** | Saves ~8 hrs/wk × $90/hr loaded × 50 wks = $36K. Also shaves days off sales cycle = +1-2 deals/yr. |
+| **NEW-6** | AI Quote Bot for Members | 3 wk | **+$30K retention + member experience** | Reduces "I forgot to order" churn driver; small but compounding LTV impact. |
+| **NEW-7** | Win/Loss Auto-Analysis | 1 wk | **+$10K (positioning lift)** | At current SA volume, 2pp conversion lift = ~1-2 extra deals/yr. Real value is messaging that compounds over time. |
+| **NEW-8** | Smart Order Routing | 4 wk | **+$30K retained ARR** (member-value play) | Increases member-perceived value of SourceClub → reduces churn + drives referrals. Not direct margin capture. |
+| **NEW-9** | Internal AI Knowledge Search | 1–2 wk | **+$60K (FTE-equivalent)** | 5 hrs/wk × 6 people × $90/hr loaded × 50 wks = $135K theoretical; halve for adoption reality. |
+| **NEW-10** | Onboarding Time-to-First-Order Tracker | 1 wk | **+$20K retained ARR** | Catches 5 stalled onboardings/yr before they early-churn × $4K avg ARR each. |
 
-**Aggregate annual $ impact: ~$1.1M** if all 10 ship in year one. These are first-order estimates — defensible directionally, not point-precise. Used as inputs to prioritization, not promises to the board.
+**Aggregate annual $ impact: ~$290K/yr** (roughly 12% of current ARR) if all 10 ship in year one. **These are defensible-directionally estimates, not point-precise** — used as inputs to prioritization, not promises to the board. Most projects in this list cost <2 engineer-weeks; ROI is strong even at half of these estimates.
+
+**Why this is the right way to think about it.** Most "AI roadmap" pitches inflate impact to look exciting. At a 7-person company, the test is: *can the engineering investment plausibly return 5–10x in year one?* Most of these clear that bar comfortably even when discounted. The ones that don't (NEW-7) are still worth doing for compounding strategic value, not point ROI.
 
 ### 90-day sequencing view
 
