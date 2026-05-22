@@ -379,11 +379,12 @@ st.markdown(f"""
 <div class="sc-tagline">Case-study deliverable for the <b>Head of AI Powered Operations, Systems &amp; RevOps</b> role. Three lean prototypes — savings-analysis automation, Stripe↔HubSpot multi-location sync, 90-day project roadmap — fronted by a <b>leadership dashboard</b> with persona views for the CEO, Head of Marketing, and Head of Sales/Revenue.</div>
 """, unsafe_allow_html=True)
 
-tab_dash, tab_sa, tab_sync, tab_roadmap = st.tabs([
+tab_dash, tab_sa, tab_sync, tab_roadmap, tab_arch = st.tabs([
     "  📊  Leadership Dashboard  ",
     "  🔍  Savings Analysis  ",
     "  🔗  Stripe ↔ HubSpot Sync  ",
     "  🗺️  90-Day Roadmap  ",
+    "  🏗️  Production Architecture  ",
 ])
 
 # ============================================================
@@ -438,6 +439,14 @@ Upload → Auto-detect Supplier → Supplier Adapter → Canonical Schema
             "Drop a supplier purchase history CSV",
             type=["csv"],
             help="Supports Benco, Henry Schein, Darby, Base86, and 'Patterson (messy)' export formats."
+        )
+        st.markdown(
+            "⬇️ [**Download a sample supplier file to try the upload →**]"
+            "(https://github.com/abhinaykrupa/sourceclub/raw/main/test_upload_riverside_benco.csv) "
+            "&nbsp; <span style='font-size:0.8rem; color:#94A3B8;'>"
+            "Fresh Benco-format export (Riverside Family Dental) the app has never processed — "
+            "download it, then drop it into the uploader above.</span>",
+            unsafe_allow_html=True,
         )
     with col_right:
         st.markdown("**Or try a sample file:**")
@@ -906,6 +915,200 @@ Weeks 12+   .... NEW-1, NEW-3, NEW-8 ...                     ← unlocked once d
 Everything else in this proposed list becomes 3–5x cheaper to build once that spine exists.
 That's the difference between a queue of 30 disconnected projects and a roadmap.
     """)
+
+# ============================================================
+# TAB 4: PRODUCTION ARCHITECTURE
+# ============================================================
+
+with tab_arch:
+    st.header("Production Architecture — POC → v1 in Production")
+    st.markdown(
+        "**The question this answers:** what does it take to move this from *\"runs on Streamlit "
+        "Cloud with mock data\"* → *\"production system processing real prospect and member data "
+        "at ~500 members today, ~2,000 in 18 months\"*?"
+    )
+    st.markdown(
+        "**The shape is already right** — adapters → matching engine → dashboard → salesperson actions. "
+        "Production adds three spines: the **data spine** (Postgres + auth + audit log), the "
+        "**AI spine** (real LLM calls with cost guardrails + prompt-injection defense), and the "
+        "**operational spine** (CI/CD + observability + on-call). Everything else is bells."
+    )
+
+    a1, a2, a3 = st.columns(3)
+    a1.metric("Effort to v1", "6–8 eng-weeks", "1 senior backend + AI oversight")
+    a2.metric("Infra cost at launch", "~$650/mo", "scales sub-linearly")
+    a3.metric("LLM cost at current volume", "~$3/mo", "essentially free")
+
+    st.caption(
+        "💡 The cost case writes itself: founder time on savings analyses alone ≈ $40K/yr; "
+        "platform run-cost ≈ $8K/yr. Payback < 3 months before any second-order revenue lift."
+    )
+
+    # ---- System diagram ----
+    with st.expander("📐 System architecture (production v1)", expanded=True):
+        st.markdown("""
+```
+                                  ┌─────────────────────┐
+                                  │   GOOGLE WORKSPACE  │
+                                  │        (SSO)        │
+                                  └──────────┬──────────┘
+                          ┌──────────────────┴──────────────────┐
+                          ▼                                     ▼
+                ┌─────────────────┐               ┌─────────────────┐
+                │  STREAMLIT APP  │               │     RETOOL      │
+                │  (sales + ops)  │               │ (reviewer queue,│
+                │  on App Runner  │               │  internal admin)│
+                └────────┬────────┘               └────────┬────────┘
+                         │ HTTP + auth                     │ direct DB
+                         ▼                                 ▼
+            ┌─────────────────────────────────────────────────────┐
+            │              POSTGRES (RDS Multi-AZ)                 │
+            │   prospects · members · matches · audit_log · ...    │
+            │   pgvector for catalog embeddings                    │
+            │   Row-level security (per tenant)                    │
+            └──────────────────┬──────────────────────────────────┘
+       ┌───────────────────────┼──────────────────────┐
+       ▼                       ▼                      ▼
+┌────────────┐         ┌──────────────┐      ┌──────────────────┐
+│  S3        │         │  REDIS       │      │  ANTHROPIC API   │
+│ (files +   │         │ (queue +     │      │  Haiku (Stage 3) │
+│  PDFs)     │         │  cache)      │      │  Sonnet (emails) │
+└────────────┘         └──────┬───────┘      └──────────────────┘
+                              │                       ▲
+                              ▼                       │
+                     ┌─────────────────┐              │
+                     │  WORKERS        │──────────────┘
+                     │  (Celery)       │
+                     │  · SA matching  │
+                     │  · PDF gen      │
+                     │  · LLM calls    │
+                     │  · Stripe sync  │
+                     └────────┬────────┘
+                ┌─────────────┼─────────────────┐
+                ▼             ▼                 ▼
+        ┌──────────┐  ┌──────────────┐  ┌──────────────┐
+        │  STRIPE  │  │  HUBSPOT     │  │  ZENONE      │
+        │ (webhook │  │  (API write) │  │  (data pull) │
+        │ ingress) │  │              │  │              │
+        └──────────┘  └──────────────┘  └──────────────┘
+
+   OBSERVABILITY: Sentry (errors) · Datadog (metrics+logs)
+                  UptimeRobot (pings) · PagerDuty → Slack
+```
+        """)
+        st.markdown(
+            "**Design principles:** ① Postgres is the single source of truth — no microservices for a "
+            "7-person team. ② Workers do the heavy lifting, not the web frontend (matching is async). "
+            "③ All external APIs are webhook-in + queue-out — no synchronous external calls in user paths. "
+            "④ One vendor per category."
+        )
+
+    # ---- Current state → production gap ----
+    st.subheader("Current State → Production Gap")
+    st.caption("Where the POC stands today on each layer, and what v1 needs. Total ≈ 30 working days for one engineer.")
+    gap = pd.DataFrame([
+        {"Layer": "Frontend", "POC today": "Streamlit Cloud", "Production v1": "Same app on AWS App Runner / Render + custom domain + SSO", "Effort": "2 days"},
+        {"Layer": "Auth", "POC today": "None", "Production v1": "Google Workspace SSO (Streamlit Auth / Auth0)", "Effort": "2 days"},
+        {"Layer": "Database", "POC today": "In-memory", "Production v1": "Postgres (RDS/Supabase) + row-level security per tenant", "Effort": "3 days"},
+        {"Layer": "Matching: deterministic + UOM", "POC today": "Real (pandas)", "Production v1": "Same code, in a worker process", "Effort": "0"},
+        {"Layer": "Matching: semantic (Stage 2)", "POC today": "difflib", "Production v1": "pgvector + sentence-transformers embeddings", "Effort": "3 days"},
+        {"Layer": "Matching: LLM judge (Stage 3)", "POC today": "Mocked", "Production v1": "Claude Haiku via Anthropic API", "Effort": "2 days"},
+        {"Layer": "Email drafter", "POC today": "Template", "Production v1": "Claude Sonnet with prospect context", "Effort": "1 day"},
+        {"Layer": "Stripe sync", "POC today": "Mock", "Production v1": "Real webhooks + canonical mapping in Postgres", "Effort": "5 days"},
+        {"Layer": "HubSpot writer", "POC today": "Mock", "Production v1": "Real API client + retry/backoff + rate-limit handling", "Effort": "3 days"},
+        {"Layer": "Background work", "POC today": "Synchronous", "Production v1": "Job queue (Celery + Redis / SQS + Lambda)", "Effort": "3 days"},
+        {"Layer": "Audit log", "POC today": "None", "Production v1": "Append-only events table + queryable UI", "Effort": "2 days"},
+        {"Layer": "Monitoring", "POC today": "Streamlit log", "Production v1": "Sentry + Datadog + UptimeRobot", "Effort": "1 day"},
+        {"Layer": "CI/CD", "POC today": "Manual deploy", "Production v1": "GitHub Actions → containerized → gated prod", "Effort": "2 days"},
+        {"Layer": "Reviewer queue", "POC today": "In-session buttons", "Production v1": "Retool dashboard on the canonical DB", "Effort": "3 days"},
+    ])
+    st.dataframe(gap, use_container_width=True, hide_index=True)
+
+    # ---- AI / LLM architecture ----
+    st.divider()
+    st.subheader("🤖 AI / LLM Architecture")
+    ac1, ac2 = st.columns(2)
+    with ac1:
+        st.markdown("**Model routing** — right model for each job")
+        routing = pd.DataFrame([
+            {"Use case": "Stage 3 LLM Judge", "Model": "Claude Haiku", "$/call": "~$0.003"},
+            {"Use case": "Email drafter", "Model": "Claude Sonnet", "$/call": "~$0.05"},
+            {"Use case": "Knowledge search (NEW-9)", "Model": "Claude Haiku", "$/call": "~$0.005"},
+            {"Use case": "Win/loss analysis (NEW-7)", "Model": "Claude Sonnet", "$/call": "~$2/run"},
+            {"Use case": "PDF/OCR extraction", "Model": "Claude Sonnet", "$/call": "~$0.10/pg"},
+            {"Use case": "Quote bot (NEW-6)", "Model": "Claude Haiku", "$/call": "~$0.005"},
+        ])
+        st.dataframe(routing, use_container_width=True, hide_index=True)
+        st.caption(
+            "At 500 members / ~30 SAs per month: ~$3/mo total. At 5,000 members: ~$30/mo. "
+            "**LLM cost is never the constraint — latency is.**"
+        )
+    with ac2:
+        st.markdown("**Safety architecture** — built in from day 1")
+        safety = pd.DataFrame([
+            {"Risk": "Prompt injection via uploads", "Mitigation": "Wrap prospect data in delimiters; treat as data only"},
+            {"Risk": "PII leakage to Anthropic", "Mitigation": "Strip names/emails/IDs; send only (desc, mfg, qty, price)"},
+            {"Risk": "Output validation", "Mitigation": "Force JSON; validate vs Pydantic; reject + fall back"},
+            {"Risk": "Hallucinated SKUs", "Mitigation": "Verify proposed sc_sku exists in catalog before accepting"},
+            {"Risk": "Cost runaway", "Mitigation": "Per-tenant daily cap; alert at 80%, hard-stop at 100%"},
+            {"Risk": "Vendor outage", "Mitigation": "Circuit-breaker → queue + fall back to review queue"},
+        ])
+        st.dataframe(safety, use_container_width=True, hide_index=True)
+        st.caption(
+            "Cost optimization: prompt caching (50–70% on Stage 3), model cascade (Haiku→Sonnet only on "
+            "low confidence), batch processing, embedding cache, deterministic-confidence floor."
+        )
+
+    # ---- Infra stack ----
+    st.divider()
+    st.subheader("🧱 Infrastructure Stack — ~$650/mo at launch")
+    st.caption("Pragmatic, vendor-consolidated, defensible. One vendor per category.")
+    stack = pd.DataFrame([
+        {"Layer": "Compute (app + workers)", "Vendor": "AWS App Runner / Render", "Cost/mo": "~$100"},
+        {"Layer": "Database", "Vendor": "AWS RDS Postgres (t4g.small Multi-AZ)", "Cost/mo": "~$120"},
+        {"Layer": "Cache + Queue", "Vendor": "AWS ElastiCache Redis", "Cost/mo": "~$25"},
+        {"Layer": "File storage", "Vendor": "AWS S3", "Cost/mo": "~$10"},
+        {"Layer": "DNS + CDN", "Vendor": "Cloudflare", "Cost/mo": "$0"},
+        {"Layer": "Auth", "Vendor": "Streamlit + Google Workspace SSO", "Cost/mo": "$0"},
+        {"Layer": "Email", "Vendor": "Postmark", "Cost/mo": "~$10"},
+        {"Layer": "Error tracking", "Vendor": "Sentry", "Cost/mo": "$0–26"},
+        {"Layer": "Metrics / Logs", "Vendor": "Datadog (Pro 5-host)", "Cost/mo": "~$120"},
+        {"Layer": "Uptime + on-call", "Vendor": "UptimeRobot + PagerDuty→Slack", "Cost/mo": "~$28"},
+        {"Layer": "Anthropic API", "Vendor": "Anthropic direct", "Cost/mo": "~$10"},
+        {"Layer": "Secrets + backups", "Vendor": "AWS Secrets Manager + RDS snapshots", "Cost/mo": "~$15"},
+        {"Layer": "Pen test (annual, amortized)", "Vendor": "Cobalt / HackerOne", "Cost/mo": "~$500"},
+    ])
+    st.dataframe(stack, use_container_width=True, hide_index=True)
+    st.caption(
+        "**Deliberately NOT picked:** Kubernetes (a 7-person team shouldn't run K8s), microservices, "
+        "Snowflake/BigQuery (Postgres handles reporting to 50K members), Pinecone/Weaviate "
+        "(pgvector avoids a separate vendor + sync layer)."
+    )
+
+    # ---- Phased rollout ----
+    st.divider()
+    st.subheader("📈 Phased Rollout")
+    st.markdown("""
+```
+Phase 0  ░ TODAY        POC — Streamlit Cloud, mock data, demo only      ← You are here
+Phase 1  ████ wk 1–4    Internal Alpha — App Runner + auth + Postgres + S3, real adapters, LLM still mocked
+Phase 2  ███  wk 5–6    Live AI — Claude Haiku into Stage 3 w/ cost cap; A/B vs mock judge; email drafter live
+Phase 3  ███  wk 6–8    Stripe ↔ HubSpot live — backfill canonical map, webhooks live, sync visible in HubSpot
+Phase 4  ██████ mo 3–6  Rolling expansion — open to all sales (founder out of SA loop); NEW-2/5/9 ship
+Phase 5  ██████ mo 6–9  Q2 backbone — ZenOne, health score, NEW-3/10; SOC 2 work; hire CS engineer
+```
+
+**Scaling note:** Postgres scales much further than people think — comfortably to 50K members on a single
+beefy RDS instance with read replicas. Don't pre-optimize. Infra runs ~$750/mo at 1,500 members,
+~$1,500/mo at 5,000.
+    """)
+
+    st.markdown(
+        "📄 **Full architecture write-up** — schema, RLS, CI pipeline, SLOs, runbooks, risk register, "
+        "team plan — in "
+        "[**PRODUCTION_ARCHITECTURE.md** on GitHub →]"
+        "(https://github.com/abhinaykrupa/sourceclub/blob/main/PRODUCTION_ARCHITECTURE.md)"
+    )
 
 st.divider()
 st.caption(
