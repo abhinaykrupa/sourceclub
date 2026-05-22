@@ -909,5 +909,7 @@ st.divider()
 st.caption(
     "POC built as case-study deliverable · Mocked LLM calls (production uses Claude Haiku/Sonnet) · "
     "Mocked Stripe/HubSpot data (production reads live APIs) · "
-    "Persistent state, auth, multi-tenancy intentionally out of POC scope"
+    "Sample practices, pipeline data, and per-location pricing ($299/mo) are illustrative — "
+    "SourceClub does not publicly disclose pricing · "
+    "All dollar impact estimates calibrated to ~500 members / ~$2.5M ARR — see SUBMISSION.md and STRATEGIC_ADDENDUM.md for the full reasoning"
 )

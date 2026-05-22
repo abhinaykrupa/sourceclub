@@ -9,12 +9,22 @@
 **🎥 Video walkthrough:** `<Loom link>` (3–5 min)
 **🔒 Security review:** [`SECURITY_REVIEW.md`](./SECURITY_REVIEW.md) — what's safe in the POC, what's required for real data
 **🏗️ Production architecture:** [`PRODUCTION_ARCHITECTURE.md`](./PRODUCTION_ARCHITECTURE.md) — vendor picks, cost model, scaling plan, 6-8 week build path
+**🎯 Strategic addendum:** [`STRATEGIC_ADDENDUM.md`](./STRATEGIC_ADDENDUM.md) — six-quarter growth thesis I'd bring to the first board meeting (unprompted; not part of the three assignments)
 
 ---
 
 ## TL;DR
 
 Three deliverables, one repo, one demo URL. Built for the **CEO, Head of Marketing, and Head of Sales/Revenue** — not just a back-office analyst — so the app opens on a **Leadership Dashboard** with three persona-targeted sections before drilling into the individual workflows.
+
+**Important business context I anchored on** (from SourceClub's public site):
+- **"90% of practices who see their numbers join"** — the savings analysis isn't a step toward the close, it *is* the close.
+- **"3x ROI guaranteed, or Source Club tells you not to join"** — they actively *disqualify* prospects when the math doesn't work.
+- **"$97K avg annual savings per practice"**, **supply costs go from 7-12% → 3-4% of revenue**.
+- **"Cancel anytime. No contracts"** — retention is fragile; value must be continuously visible.
+- They already have a member-facing app (`app.sourceclub.com`) — my work *complements* that, not replaces it.
+
+These five facts drive every recommendation below.
 
 - **Assignment 1.** Working POC that auto-detects supplier (Benco / Henry Schein / Darby / Base86 / Patterson), parses the file, runs a 3-stage matching engine with UOM/pack-size verification, and produces (a) an interactive savings report, (b) a **branded PDF** for the prospect, and (c) an **AI-drafted follow-up email**.
 - **Assignment 2.** Recommended **custom sync + canonical mapping table** over native or middleware-only options. Mocked end-to-end in the POC including multi-location billing rollups and an exception queue for unmapped customers.
@@ -263,13 +273,13 @@ These come from thinking about SourceClub's flywheel: every member buys monthly 
 | ID | Project | Effort | Annual $ Impact | Mechanism |
 |---|---|---|---|---|
 | **NEW-1** | Supplier API Integrations (Benco, Henry Schein) | 4–6 wk | **+$50K ARR** | Faster SA turnaround → ~10 extra closes/yr × ~$5K avg ACV. Eliminates analyst time too (~$15K labor saved); main value is sales velocity. |
-| **NEW-2** | Catalog Drift Monitor | 1 wk | **+$15K retained ARR** | Prevents ~3 trust-driven churns/yr × $5K avg ACV. Cheap insurance. |
+| **NEW-2** | Catalog Compliance Monitor | 1 wk | **+$15K retained ARR** | SC prices are *contractually locked* for 6 months. This auto-files price-match claims when a supplier invoice exceeds the locked rate — protects trust + recovers refunds. Prevents ~3 trust-driven churns/yr × $5K ACV. |
 | **NEW-3** | Member Spend Forecast + Drop Alert | 2 wk | **+$25K retained ARR** | Catches 5 at-risk members 60 days earlier → saves 5 × $5K = $25K of would-be churn. |
 | **NEW-4** | Cross-Sell Recommender | 2–3 wk | **+$15K retained ARR** (member-value play) | Members feel more value → measurable in NPS + renewal rates. Indirect revenue, not direct margin. |
 | **NEW-5** | Prospect Auto-Enrichment | 1–2 wk | **+$35K (sales hours saved + cycle compression)** | Saves ~8 hrs/wk × $90/hr loaded × 50 wks = $36K. Also shaves days off sales cycle = +1-2 deals/yr. |
 | **NEW-6** | AI Quote Bot for Members | 3 wk | **+$30K retention + member experience** | Reduces "I forgot to order" churn driver; small but compounding LTV impact. |
 | **NEW-7** | Win/Loss Auto-Analysis | 1 wk | **+$10K (positioning lift)** | At current SA volume, 2pp conversion lift = ~1-2 extra deals/yr. Real value is messaging that compounds over time. |
-| **NEW-8** | Smart Order Routing | 4 wk | **+$30K retained ARR** (member-value play) | Increases member-perceived value of SourceClub → reduces churn + drives referrals. Not direct margin capture. |
+| **NEW-8** | Intelligent Order Routing (layer on existing "One login, all suppliers") | 4 wk | **+$30K retained ARR** | SC already has multi-supplier ordering. This adds *intelligence* on top — auto-recommends the cheapest in-stock supplier per item per order. Drives member-perceived value → retention + referrals. |
 | **NEW-9** | Internal AI Knowledge Search | 1–2 wk | **+$60K (FTE-equivalent)** | 5 hrs/wk × 6 people × $90/hr loaded × 50 wks = $135K theoretical; halve for adoption reality. |
 | **NEW-10** | Onboarding Time-to-First-Order Tracker | 1 wk | **+$20K retained ARR** | Catches 5 stalled onboardings/yr before they early-churn × $4K avg ARR each. |
 

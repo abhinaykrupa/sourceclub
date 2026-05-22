@@ -11,6 +11,7 @@ A lean, runnable prototype built to be used by the **CEO, Head of Marketing, and
 Plus a **Leadership Dashboard** (first tab) with three persona-targeted sections so each executive lands on the data they care about.
 
 📄 **Full written submission:** [`SUBMISSION.md`](./SUBMISSION.md)
+🎯 **Strategic addendum** (six-quarter growth thesis, unprompted): [`STRATEGIC_ADDENDUM.md`](./STRATEGIC_ADDENDUM.md)
 🔒 **Security review:** [`SECURITY_REVIEW.md`](./SECURITY_REVIEW.md)
 🏗️ **Production architecture:** [`PRODUCTION_ARCHITECTURE.md`](./PRODUCTION_ARCHITECTURE.md)
 ✉️ **Submission email draft:** [`SUBMISSION_EMAIL.md`](./SUBMISSION_EMAIL.md)
