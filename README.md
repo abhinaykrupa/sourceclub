@@ -18,6 +18,22 @@ Plus a **Leadership Dashboard** (first tab) with three persona-targeted sections
 
 ---
 
+## 🚀 Live demo (no install)
+
+**▶️ [sourceclub-poc.streamlit.app](https://sourceclub-poc.streamlit.app/)**
+
+Hosted on Streamlit Community Cloud. Just open the link in any browser — no login, no API keys, nothing to install.
+
+- **First load may take ~30 seconds.** Community Cloud puts idle apps to sleep; if you see a "waking up" screen, give it a moment and it boots automatically.
+- **Best on desktop.** The dashboard and tables are wide; a laptop/monitor beats a phone.
+- Everything runs on mock data, so you can click freely — nothing is sent anywhere and there's no live customer data.
+
+**Try it in 60 seconds:** open the link → land on the **Leadership Dashboard** → click **🔍 Savings Analysis** → pick **"Auburn Dental (Benco)"** from the sample dropdown → watch the matching engine run and download the branded PDF. Then skim the **🏗️ Production Architecture** tab to see how it goes to v1.
+
+> Prefer to run it yourself, or want to inspect the code? See [Quick start (local)](#quick-start-local) below.
+
+---
+
 ## Quick start (local)
 
 Requires Python 3.10+.
@@ -38,7 +54,7 @@ The app opens at `http://localhost:8501`. Land on the **Leadership Dashboard**, 
 
 ```
 app/
-  main.py                       Streamlit UI — four tabs (Dashboard, SA, Sync, Roadmap)
+  main.py                       Streamlit UI — five tabs (Dashboard, SA, Sync, Roadmap, Production Architecture)
   views/
     dashboard.py                Leadership Dashboard (CEO / Marketing / Sales sections)
   engine/
@@ -82,8 +98,10 @@ SUBMISSION.md                   Full written deliverable for the recruiter
    - Click **📄 Generate Branded PDF Report** → downloads a 2-page branded PDF
    - Click **🤖 Draft AI Follow-up Email** → personalized email appears
    - Try **"Patterson (messy real-world export)"** to see the engine handle chaos
-3. **Tab 2** — pick "Sunrise Orthodontics" to see a multi-location billing rollup with health states
+   - To test the **upload** path: click **⬇️ Download a sample supplier file** under the uploader, then drag that CSV back into the uploader — it runs on a practice the app has never processed
+3. **Tab 2** — pick a company (e.g. "Sunrise Orthodontics") to see a multi-location billing rollup with health states
 4. **Tab 3** — roadmap with dollar impact estimates per project
+5. **Tab 4: Production Architecture** — system diagram, POC→prod gap table, AI/infra stack, and phased rollout for taking this to v1
 
 ---
 
