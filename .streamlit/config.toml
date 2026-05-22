@@ -1,0 +1,16 @@
+[theme]
+# Modern healthcare palette — teal-blue + sage green
+# Inspired by One Medical, Forward, Oscar Health visual language
+primaryColor = "#0EA5A1"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F0F9F8"
+textColor = "#0F172A"
+font = "sans serif"
+base = "light"
+
+[server]
+headless = true
+runOnSave = true
+
+[browser]
+gatherUsageStats = false
